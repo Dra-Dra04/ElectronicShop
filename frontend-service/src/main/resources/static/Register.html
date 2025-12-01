@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electro - Register</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body>
+<!-- HEADER + breadcrumb giống login -->
+
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="breadcrumb-header">Register</h3>
+                <ul class="breadcrumb-tree">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="active">Register</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <form id="register-form">
+                    <div class="form-group">
+                        <input id="reg-name" class="input" type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input id="reg-email" class="input" type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input id="reg-password" class="input" type="password" placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <input id="reg-phone" class="input" type="text" placeholder="Phone">
+                    </div>
+                    <div class="form-group">
+                        <input id="reg-address" class="input" type="text" placeholder="Address">
+                    </div>
+                    <button type="submit" class="primary-btn">Register</button>
+                    <p id="register-message" style="margin-top:10px;"></p>
+                </form>
+                <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script>
+const CUSTOMER_API_BASE = "http://localhost:8083/api/customers";
+
+async function doRegister(e) {
+    e.preventDefault();
+
+    const body = {
+        fullName: document.getElementById("reg-name").value,
+        email: document.getElementById("reg-email").value,
+        password: document.getElementById("reg-password").value,
+        phone: document.getElementById("reg-phone").value,
+        address: document.getElementById("reg-address").value
+    };
+
+    try {
+        const res = await fetch(CUSTOMER_API_BASE, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error("Register failed");
+
+        document.getElementById("register-message").innerText =
+            "Đăng ký thành công! Bạn có thể đăng nhập.";
+    } catch (e1) {
+        console.error(e1);
+        document.getElementById("register-message").innerText =
+            "Đăng ký thất bại.";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("register-form").addEventListener("submit", doRegister);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electro - Login</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body>
+<!-- HEADER đơn giản hoặc copy từ index -->
+
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="breadcrumb-header">Login</h3>
+                <ul class="breadcrumb-tree">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="active">Login</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <form id="login-form">
+                    <div class="form-group">
+                        <input id="login-email" class="input" type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input id="login-password" class="input" type="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Login</button>
+                    <p id="login-message" style="margin-top:10px;"></p>
+                </form>
+                <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script>
+const CUSTOMER_API_BASE = "http://localhost:8083/api/customers";
+
+async function doLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    try {
+        const res = await fetch(CUSTOMER_API_BASE + "/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email, password})
+        });
+        if (!res.ok) throw new Error("Login failed");
+
+        const user = await res.json();
+        localStorage.setItem("user", JSON.stringify(user));
+        document.getElementById("login-message").innerText = "Đăng nhập thành công!";
+        // về trang chủ
+        setTimeout(() => window.location.href = "index.html", 800);
+    } catch (e1) {
+        console.error(e1);
+        document.getElementById("login-message").innerText =
+            "Sai email hoặc mật khẩu.";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("login-form").addEventListener("submit", doLogin);
+});
+</script>
+</body>
+</html>
