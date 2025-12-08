@@ -7,6 +7,7 @@ import com.ecomelectronics.customerservice.model.UserAccount;
 import com.ecomelectronics.customerservice.model.UserRole;
 import com.ecomelectronics.customerservice.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -134,6 +135,7 @@ public class UserAccountController {
         return userRepo.findByRole(UserRole.CUSTOMER)
                 .stream().map(this::toDto).toList();
     }
+
 
 
 }

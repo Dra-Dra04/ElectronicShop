@@ -1,9 +1,13 @@
 package com.ecomelectronics.customerservice.product_service.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Categories")
+@Data
 public class Category {
 
     @Id
@@ -22,13 +26,7 @@ public class Category {
         this.name = name;
         this.description = description;
     }
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 }

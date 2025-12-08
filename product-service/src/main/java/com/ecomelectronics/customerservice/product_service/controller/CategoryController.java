@@ -1,7 +1,9 @@
 package com.ecomelectronics.customerservice.product_service.controller;
 
+import com.ecomelectronics.customerservice.product_service.dto.CategoryDto;
 import com.ecomelectronics.customerservice.product_service.model.Category;
 import com.ecomelectronics.customerservice.product_service.repository.CategoryRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +33,13 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category create(@RequestBody Category category) {
-        return repo.save(category);
+    public ResponseEntity<CategoryDto> create(@RequestBody CategoryDto dto) {
+        Category category = new Category();
+        category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
+        category = repo.save(category);
+        BeanUtils.copyProperties(category, dto);
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{id}")
