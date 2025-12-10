@@ -1,7 +1,7 @@
-package com.ecomelectronics.customerservice.product_service.controller;
+package com.ecomelectronics.product_service.controller;
 
-import com.ecomelectronics.customerservice.product_service.model.Category;
-import com.ecomelectronics.customerservice.product_service.repository.CategoryRepository;
+import com.ecomelectronics.product_service.model.Category;
+import com.ecomelectronics.product_service.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

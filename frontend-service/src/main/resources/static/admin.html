@@ -242,7 +242,6 @@
                                         <h4 class="title">Add New Brand</h4>
                                     </div>
                                     <div class="admin-form-group">
-                                        <!-- ADDED: id để sau này gọi API thêm brand -->
                                         <input id="brand-name-input" class="input" type="text" name="brand-name" placeholder="Brand Name">
                                     </div>
                                     <button class="btn-red" id="btn-add-brand"><i class="fa fa-plus"></i> Add Brand</button>
@@ -254,7 +253,6 @@
                                         <h4 class="title">Add Categories</h4>
                                     </div>
                                     <div class="admin-form-group">
-                                        <!-- ADDED: id để sau này gọi API thêm category -->
                                         <input id="category-name-input" class="input" type="text" name="manu-name" placeholder="Category Name">
                                     </div>
                                     <button class="btn-red" id="btn-add-category"><i class="fa fa-plus"></i> Add Categories</button>
@@ -371,25 +369,19 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="admin-form-group">
-                                <label>Thương hiệu</label>
+                                <label>Brand</label>
                                 <select id="product-brand-select" class="input">
-                                    <!-- TODO: có thể load từ API /api/admin/brands -->
                                     <option value="">Chọn thương hiệu</option>
-                                    <option value="1">Samsung</option>
-                                    <option value="2">LG</option>
-                                    <option value="3">Sony</option>
+                                    <!-- options sẽ được load từ API /brands -->
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="admin-form-group">
-                                <label>Manufacturer / Category</label>
+                                <label> Category</label>
                                 <select id="product-category-select" class="input">
-                                    <!-- TODO: có thể load từ API /api/admin/categories -->
                                     <option value="">Chọn loại sản phẩm</option>
-                                    <option value="1">Laptop</option>
-                                    <option value="2">Headphone</option>
-                                    <option value="3">TV</option>
+                                    <!-- options sẽ được load từ API /categories -->
                                 </select>
                             </div>
                         </div>
@@ -400,9 +392,16 @@
                         <textarea id="product-description-input" class="input" style="height: 100px;" placeholder="Product description..."></textarea>
                     </div>
                     <div class="admin-form-group">
-                        <label>Hình ảnh sản phẩm</label>
-                        <!-- ADDED: hiện tại chỉ lưu URL text (ko upload file thật) -->
-                        <input id="product-image-url-input" type="text" class="input" placeholder="Image URL (optional)">
+                        <label>Ảnh chính (Main Image URL)</label>
+                        <input id="product-main-image-url-input" type="text" class="input"
+                               placeholder="https://example.com/main-image.jpg">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Ảnh phụ (mỗi dòng 1 URL)</label>
+                        <textarea id="product-extra-images-input" class="input" style="height: 80px;"
+                                  placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea>
+                        <small class="text-muted">Mỗi dòng là 1 URL ảnh. Ảnh đầu tiên sẽ được dùng làm thumbnail nếu không có ảnh chính.</small>
                     </div>
                 </form>
             </div>
@@ -410,6 +409,84 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <!-- UPDATED: nút Update gọi JS addProduct() -->
                 <button type="button" class="btn btn-red" id="btn-save-product">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- EDIT PRODUCT -->
+<!-- MODAL: EDIT PRODUCT -->
+<div id="editProductModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Chỉnh sửa sản phẩm</h4>
+            </div>
+            <div class="modal-body">
+                <form id="edit-product-form">
+                    <!-- Ẩn ID sản phẩm -->
+                    <input type="hidden" id="edit-product-id">
+
+                    <div class="admin-form-group">
+                        <label>Tên sản phẩm</label>
+                        <input id="edit-product-name-input" class="input" type="text" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label>Giá tiền</label>
+                                <input id="edit-product-price-input" class="input" type="number" min="0" step="1000" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label>Số lượng</label>
+                                <input id="edit-product-stock-input" class="input" type="number" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label>Thương hiệu</label>
+                                <select id="edit-product-brand-select" class="input">
+                                    <option value="">Chọn thương hiệu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label>Category</label>
+                                <select id="edit-product-category-select" class="input">
+                                    <option value="">Chọn loại sản phẩm</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Mô tả</label>
+                        <textarea id="edit-product-description-input" class="input" style="height:100px;"></textarea>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Ảnh chính (Main Image URL)</label>
+                        <input id="edit-product-main-image-url-input" type="text" class="input">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Ảnh phụ (mỗi dòng 1 URL)</label>
+                        <textarea id="edit-product-extra-images-input" class="input" style="height:80px;"></textarea>
+                        <small class="text-muted">Mỗi dòng là 1 URL. Ảnh chính nằm ở ô trên.</small>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-red" id="btn-update-product">Update</button>
             </div>
         </div>
     </div>
@@ -505,21 +582,30 @@
 
     // Khi trang load xong
     $(document).ready(function () {
-        loadDashboardStats();
-        loadProducts();
+    loadDashboardStats();
+    loadProducts();
+    loadBrands();
+    loadCategories();
 
-        // handle nút Save trong modal Add Product
-        $('#btn-save-product').on('click', function () {
-            addProduct();
-        });
+    // Save new product
+    $('#btn-save-product').on('click', function () {
+        addProduct();
+    });
 
-        // (Tạm thời) gắn alert cho nút add brand / category
-        $('#btn-add-brand').on('click', function () {
-            alert('TODO: gọi API POST /api/admin/brands');
-        });
-        $('#btn-add-category').on('click', function () {
-            alert('TODO: gọi API POST /api/admin/categories');
-        });
+    // Add new brand
+    $('#btn-add-brand').on('click', function () {
+        createBrand();
+    });
+
+    // Add new category
+    $('#btn-add-category').on('click', function () {
+        createCategory();
+    });
+
+    // Update product
+    $('#btn-update-product').on('click', function () {
+        updateProduct();
+    });
     });
 
     // -------- DASHBOARD --------
@@ -546,72 +632,336 @@
 
     // -------- PRODUCTS LIST --------
     function loadProducts() {
-        $.get(ADMIN_API_BASE + '/products')
-            .done(function (products) {
-                const $tbody = $('#product-table-body');
-                $tbody.empty();
+    $.get(ADMIN_API_BASE + '/products')
+        .done(function (products) {
+            const $tbody = $('#product-table-body');
+            $tbody.empty();
 
-                if (!products || products.length === 0) {
-                    $tbody.append(
-                        '<tr><td colspan="6" class="text-center">No products found</td></tr>'
-                    );
+            if (!products || products.length === 0) {
+                $tbody.append(
+                    '<tr><td colspan="6" class="text-center">No products found</td></tr>'
+                );
+                return;
+            }
+
+            products.forEach(function (p) {
+                const priceFormatted = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(p.price || 0);
+
+                let stockLabelClass = 'label-success';
+                let stockText = 'Còn hàng';
+                if (p.stock === 0) {
+                    stockLabelClass = 'label-danger';
+                    stockText = 'Hết hàng';
+                } else if (p.stock < 5) {
+                    stockLabelClass = 'label-warning';
+                    stockText = 'Sắp hết';
+                }
+
+                // Lấy thumbnail: ưu tiên imageUrl, sau đó tới images[0]
+                let thumbUrl = p.imageUrl;
+                if ((!thumbUrl || thumbUrl === '') && p.images && p.images.length > 0) {
+                    const mainImg = p.images.find(i => i.isMain) || p.images[0];
+                    thumbUrl = mainImg.imageUrl;
+                }
+
+                const rowHtml = `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td>
+                            <div style="width:50px; height:50px; background:#eee; display:flex; align-items:center; justify-content:center;">
+                                ${thumbUrl
+                    ? '<img src="' + thumbUrl + '" style="max-width:100%; max-height:100%;" />'
+                    : '<i class="fa fa-picture-o"></i>'}
+                            </div>
+                        </td>
+                        <td>${p.name || ''}</td>
+                        <td>${priceFormatted}</td>
+                        <td><span class="label ${stockLabelClass}">${stockText}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-default" onclick="editProduct(${p.id})"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(rowHtml);
+            });
+        })
+        .fail(function () {
+            console.error('Failed to load products');
+        });
+        }
+
+    // -------- ADD PRODUCT --------
+    function addProduct() {
+    const name = $('#product-name-input').val().trim();
+    const price = parseFloat($('#product-price-input').val());
+    const stock = parseInt($('#product-stock-input').val(), 10);
+    const brandId = $('#product-brand-select').val() || null;
+    const categoryId = $('#product-category-select').val() || null;
+    const description = $('#product-description-input').val().trim();
+
+    const mainImageUrl = $('#product-main-image-url-input').val().trim();
+    const extraImagesRaw = $('#product-extra-images-input').val();
+
+    if (!name || isNaN(price) || isNaN(stock)) {
+        alert('Vui lòng nhập đầy đủ Tên, Giá và Số lượng');
+        return;
+    }
+
+    // Chuẩn bị mảng images cho backend (ProductImage)
+    const images = [];
+    let imageUrlField = null; // giữ ảnh chính để map vào Product.imageUrl (nếu backend vẫn dùng)
+
+    if (mainImageUrl) {
+        images.push({
+            imageUrl: mainImageUrl,
+            isMain: true,
+            sortOrder: 0
+        });
+        imageUrlField = mainImageUrl;
+    }
+
+    if (extraImagesRaw && extraImagesRaw.trim().length > 0) {
+        const lines = extraImagesRaw.split(/\r?\n/);
+        lines.forEach(function (line) {
+            const url = line.trim();
+            if (url) {
+                images.push({
+                    imageUrl: url,
+                    isMain: false,
+                    sortOrder: images.length // tiếp tục thứ tự
+                });
+            }
+        });
+    }
+
+    const payload = {
+        name: name,
+        price: price,
+        stock: stock,
+        brandId: brandId ? parseInt(brandId, 10) : null,
+        categoryId: categoryId ? parseInt(categoryId, 10) : null,
+        description: description,
+        imageUrl: imageUrlField, // để product-service map vào Product.imageUrl
+        images: images          // để map sang List<ProductImage>
+    };
+
+    $.ajax({
+        url: ADMIN_API_BASE + '/products',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function () {
+            $('#addProductModal').modal('hide');
+            $('#add-product-form')[0].reset();
+            $('#product-extra-images-input').val('');
+            loadProducts();
+        },
+        error: function () {
+            alert('Thêm sản phẩm thất bại. Kiểm tra lại backend admin-service / product-service.');
+        }
+    });
+}
+
+    // -------- BRANDS --------
+    function loadBrands() {
+        $.get(ADMIN_API_BASE + '/brands')
+            .done(function (brands) {
+                const $tbody = $('#brand-table-body');
+                const $selectAdd = $('#product-brand-select');
+                const $selectEdit = $('#edit-product-brand-select');
+
+                $tbody.empty();
+                $selectAdd.find('option:not(:first)').remove();
+                $selectEdit.find('option:not(:first)').remove();
+
+                if (!brands || brands.length === 0) {
+                    $tbody.append('<tr><td colspan="4" class="text-center">No brands</td></tr>');
                     return;
                 }
 
-                products.forEach(function (p) {
-                    const priceFormatted = new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(p.price || 0);
-
-                    let stockLabelClass = 'label-success';
-                    let stockText = 'Còn hàng';
-                    if (p.stock === 0) {
-                        stockLabelClass = 'label-danger';
-                        stockText = 'Hết hàng';
-                    } else if (p.stock < 5) {
-                        stockLabelClass = 'label-warning';
-                        stockText = 'Sắp hết';
-                    }
-
+                brands.forEach(function (b) {
+                    // Table
                     const rowHtml = `
                         <tr>
-                            <td>#${p.id}</td>
+                            <td>${b.id}</td>
+                            <td>${b.name}</td>
+                            <td>${b.productCount || 0}</td>
                             <td>
-                                <div style="width:50px; height:50px; background:#eee; display:flex; align-items:center; justify-content:center;">
-                                    ${p.imageUrl ? '<img src="' + p.imageUrl + '" style="max-width:100%; max-height:100%;" />' : '<i class="fa fa-picture-o"></i>'}
-                                </div>
-                            </td>
-                            <td>${p.name || ''}</td>
-                            <td>${priceFormatted}</td>
-                            <td><span class="label ${stockLabelClass}">${stockText}</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-default" onclick="editProduct(${p.id})"><i class="fa fa-pencil"></i></button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})"><i class="fa fa-trash"></i></button>
+                                <!-- tuỳ bạn muốn thêm Edit/Delete brand -->
                             </td>
                         </tr>
                     `;
                     $tbody.append(rowHtml);
+
+                    // Select (Add + Edit)
+                    const option = `<option value="${b.id}">${b.name}</option>`;
+                    $selectAdd.append(option);
+                    $selectEdit.append(option);
                 });
             })
             .fail(function () {
-                console.error('Failed to load products');
+                console.error('Failed to load brands');
             });
     }
 
-    // -------- ADD PRODUCT --------
-    function addProduct() {
-        const name = $('#product-name-input').val().trim();
-        const price = parseFloat($('#product-price-input').val());
-        const stock = parseInt($('#product-stock-input').val(), 10);
-        const brandId = $('#product-brand-select').val() || null;
-        const categoryId = $('#product-category-select').val() || null;
-        const description = $('#product-description-input').val().trim();
-        const imageUrl = $('#product-image-url-input').val().trim();
+    function createBrand() {
+        const name = $('#brand-name-input').val().trim();
+        if (!name) {
+            alert('Vui lòng nhập tên Brand');
+            return;
+        }
+
+        $.ajax({
+            url: ADMIN_API_BASE + '/brands',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ name: name }),
+            success: function () {
+                $('#brand-name-input').val('');
+                loadBrands();
+            },
+            error: function () {
+                alert('Tạo brand thất bại. Kiểm tra API POST /brands');
+            }
+        });
+    }
+
+    // -------- CATEGORIES --------
+    function loadCategories() {
+        $.get(ADMIN_API_BASE + '/categories')
+            .done(function (categories) {
+                const $selectAdd = $('#product-category-select');
+                const $selectEdit = $('#edit-product-category-select');
+
+                $selectAdd.find('option:not(:first)').remove();
+                $selectEdit.find('option:not(:first)').remove();
+
+                if (!categories || categories.length === 0) {
+                    return;
+                }
+
+                categories.forEach(function (c) {
+                    const option = `<option value="${c.id}">${c.name}</option>`;
+                    $selectAdd.append(option);
+                    $selectEdit.append(option);
+                });
+            })
+            .fail(function () {
+                console.error('Failed to load categories');
+            });
+    }
+
+    function createCategory() {
+        const name = $('#category-name-input').val().trim();
+        if (!name) {
+            alert('Vui lòng nhập tên Category');
+            return;
+        }
+
+        $.ajax({
+            url: ADMIN_API_BASE + '/categories',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ name: name }),
+            success: function () {
+                $('#category-name-input').val('');
+                loadCategories();
+            },
+            error: function () {
+                alert('Tạo category thất bại. Kiểm tra API POST /categories');
+            }
+        });
+    }
+
+    // -------- EDIT PRODUCT --------
+    function editProduct(id) {
+        // Lấy full thông tin product từ backend
+        $.get(ADMIN_API_BASE + '/products/' + id)
+            .done(function (p) {
+                // Đảm bảo brand & category đã load
+                // (nếu đang load chưa xong thì setTimeout 1 chút, nhưng tạm coi đã có)
+                $('#edit-product-id').val(p.id);
+                $('#edit-product-name-input').val(p.name || '');
+                $('#edit-product-price-input').val(p.price || 0);
+                $('#edit-product-stock-input').val(p.stock || 0);
+                $('#edit-product-description-input').val(p.description || '');
+
+                if (p.brandId) {
+                    $('#edit-product-brand-select').val(p.brandId);
+                }
+                if (p.categoryId) {
+                    $('#edit-product-category-select').val(p.categoryId);
+                }
+
+                // Xử lý images
+                let mainImageUrl = p.imageUrl || '';
+                let extraImages = [];
+
+                if (p.images && p.images.length > 0) {
+                    const mainImg = p.images.find(i => i.isMain) || null;
+                    if (mainImg) {
+                        mainImageUrl = mainImg.imageUrl;
+                    }
+                    extraImages = p.images
+                        .filter(i => !i.isMain)
+                        .map(i => i.imageUrl);
+                }
+
+                $('#edit-product-main-image-url-input').val(mainImageUrl || '');
+                $('#edit-product-extra-images-input').val(extraImages.join('\n'));
+
+                $('#editProductModal').modal('show');
+            })
+            .fail(function () {
+                alert('Không load được thông tin sản phẩm #' + id);
+            });
+    }
+
+    function updateProduct() {
+        const id = $('#edit-product-id').val();
+        const name = $('#edit-product-name-input').val().trim();
+        const price = parseFloat($('#edit-product-price-input').val());
+        const stock = parseInt($('#edit-product-stock-input').val(), 10);
+        const brandId = $('#edit-product-brand-select').val() || null;
+        const categoryId = $('#edit-product-category-select').val() || null;
+        const description = $('#edit-product-description-input').val().trim();
+
+        const mainImageUrl = $('#edit-product-main-image-url-input').val().trim();
+        const extraImagesRaw = $('#edit-product-extra-images-input').val();
 
         if (!name || isNaN(price) || isNaN(stock)) {
             alert('Vui lòng nhập đầy đủ Tên, Giá và Số lượng');
             return;
+        }
+
+        const images = [];
+        let imageUrlField = null;
+
+        if (mainImageUrl) {
+            images.push({
+                imageUrl: mainImageUrl,
+                isMain: true,
+                sortOrder: 0
+            });
+            imageUrlField = mainImageUrl;
+        }
+
+        if (extraImagesRaw && extraImagesRaw.trim().length > 0) {
+            const lines = extraImagesRaw.split(/\r?\n/);
+            lines.forEach(function (line) {
+                const url = line.trim();
+                if (url) {
+                    images.push({
+                        imageUrl: url,
+                        isMain: false,
+                        sortOrder: images.length
+                    });
+                }
+            });
         }
 
         const payload = {
@@ -621,31 +971,25 @@
             brandId: brandId ? parseInt(brandId, 10) : null,
             categoryId: categoryId ? parseInt(categoryId, 10) : null,
             description: description,
-            imageUrl: imageUrl
+            imageUrl: imageUrlField,
+            images: images
         };
 
         $.ajax({
-            url: ADMIN_API_BASE + '/products',
-            method: 'POST',
+            url: ADMIN_API_BASE + '/products/' + id,
+            method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(payload),
             success: function () {
-                $('#addProductModal').modal('hide');
-                // clear form
-                $('#add-product-form')[0].reset();
-                // reload list
+                $('#editProductModal').modal('hide');
                 loadProducts();
             },
             error: function () {
-                alert('Thêm sản phẩm thất bại. Kiểm tra lại backend admin-service / product-service.');
+                alert('Cập nhật sản phẩm thất bại.');
             }
         });
     }
-
-    // -------- EDIT / DELETE PRODUCT (tạm thời đơn giản) --------
-    function editProduct(id) {
-        alert('TODO: mở modal chỉnh sửa sản phẩm ID = ' + id);
-    }
+    // -------- DELETE PRODUCT  --------
 
     function deleteProduct(id) {
         if (!confirm('Bạn có chắc muốn xoá sản phẩm #' + id + ' ?')) {

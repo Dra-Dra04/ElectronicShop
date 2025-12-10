@@ -1,4 +1,4 @@
-package com.ecomelectronics.customerservice.product_service.dto;
+package com.ecomelectronics.product_service.dto;
 
 import java.math.BigDecimal;
 

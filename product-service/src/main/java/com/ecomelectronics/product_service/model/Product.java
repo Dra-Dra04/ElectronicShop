@@ -1,9 +1,11 @@
-package com.ecomelectronics.customerservice.product_service.model;
+package com.ecomelectronics.product_service.model;
 
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;      // NEW
+import java.util.List;           // NEW
 
 @Entity
 @Table(name = "Products")
@@ -28,6 +30,7 @@ public class Product {
     @Column(length = 100)
     private String brand;
 
+    // Ảnh chính (giữ nguyên, dùng làm ảnh mặc định nếu muốn)
     @Column(length = 255)
     private String imageUrl;
 
@@ -39,6 +42,16 @@ public class Product {
     private Category category;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // 1 Product có nhiều ProductImage  ------------------- NEW
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<ProductImage> images = new ArrayList<>();
+    // ------------------------------------------------------
 
     public Product() {}
 
@@ -54,6 +67,9 @@ public class Product {
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
 
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
+
     public String getBrand() { return brand; }
     public void setBrand(String brand) { this.brand = brand; }
 
@@ -68,4 +84,19 @@ public class Product {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // NEW: getter/setter cho images
+    public List<ProductImage> getImages() { return images; }
+    public void setImages(List<ProductImage> images) { this.images = images; }
+
+    // tiện thêm helper method để add/remove ảnh
+    public void addImage(ProductImage image) {
+        images.add(image);
+        image.setProduct(this);
+    }
+
+    public void removeImage(ProductImage image) {
+        images.remove(image);
+        image.setProduct(null);
+    }
 }
