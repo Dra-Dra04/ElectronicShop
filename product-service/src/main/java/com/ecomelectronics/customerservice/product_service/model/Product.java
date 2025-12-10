@@ -22,6 +22,9 @@ public class Product {
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "stock_quantity", nullable = false, columnDefinition = "integer default 0")
+    private Integer stock = 0;
+
     @Column(length = 100)
     private String brand;
 
