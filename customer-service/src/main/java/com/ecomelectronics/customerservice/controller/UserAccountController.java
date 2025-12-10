@@ -6,20 +6,23 @@ import com.ecomelectronics.customerservice.dto.UserDto;
 import com.ecomelectronics.customerservice.model.UserAccount;
 import com.ecomelectronics.customerservice.model.UserRole;
 import com.ecomelectronics.customerservice.repository.UserAccountRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class UserAccountController {
 
     @Autowired
     private UserAccountRepository userRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // ---- Helpers mapping ----
     private UserDto toDto(UserAccount u) {
@@ -77,9 +80,6 @@ public class UserAccountController {
         user = userRepo.save(user);
         return toDto(user);
     }
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
 
     // PUT /api/users/{id}
     @PutMapping("/{id}")
@@ -134,6 +134,16 @@ public class UserAccountController {
         return userRepo.findByRole(UserRole.CUSTOMER)
                 .stream().map(this::toDto).toList();
     }
+    @GetMapping("/me")
+    public UserDto getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("Unauthenticated");
+        }
 
+        String email = userDetails.getUsername();
+        UserAccount user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return toDto(user);
+    }
 }

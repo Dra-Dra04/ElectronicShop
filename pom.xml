@@ -27,7 +27,8 @@
         <module>frontend-service</module>
         <module>product-service</module>
         <module>customer-service</module>
-<!--    <module>order-service</module>
-        <module>inventory-service</module>-->
+        <module>admin-service</module>
+        <!--    <module>order-service</module>
+                <module>inventory-service</module>-->
     </modules>
 </project>
