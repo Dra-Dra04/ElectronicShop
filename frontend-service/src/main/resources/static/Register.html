@@ -1,55 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Electro - Register</title>
-
+    <meta charset="UTF-8">
+    <title>Register - Electro</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
     <link type="text/css" rel="stylesheet" href="css/style.css"/>
-    <link rel="stylesheet" href="css/font-awesome.min.css">
 </head>
 <body>
-<!-- HEADER + breadcrumb giống login -->
 
-<div id="breadcrumb" class="section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h3 class="breadcrumb-header">Register</h3>
-                <ul class="breadcrumb-tree">
-                    <li><a href="index.html">Home</a></li>
-                    <li class="active">Register</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- TODO: có thể copy header Electro từ store.html sang -->
 
 <div class="section">
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <form id="register-form">
+                <h2>Đăng ký tài khoản</h2>
+                <form id="registerForm">
                     <div class="form-group">
-                        <input id="reg-name" class="input" type="text" placeholder="Full Name" required>
+                        <label>Họ tên</label>
+                        <input id="fullName" class="input" required>
                     </div>
                     <div class="form-group">
-                        <input id="reg-email" class="input" type="email" placeholder="Email" required>
+                        <label>Email</label>
+                        <input id="email" type="email" class="input" required>
                     </div>
                     <div class="form-group">
-                        <input id="reg-password" class="input" type="password" placeholder="Password" required>
+                        <label>Mật khẩu</label>
+                        <input id="password" type="password" class="input" required>
                     </div>
                     <div class="form-group">
-                        <input id="reg-phone" class="input" type="text" placeholder="Phone">
+                        <label>Số điện thoại</label>
+                        <input id="phone" class="input">
                     </div>
                     <div class="form-group">
-                        <input id="reg-address" class="input" type="text" placeholder="Address">
+                        <label>Địa chỉ</label>
+                        <input id="address" class="input">
                     </div>
-                    <button type="submit" class="primary-btn">Register</button>
-                    <p id="register-message" style="margin-top:10px;"></p>
+                    <button type="submit" class="primary-btn">Đăng ký</button>
+                    <p class="text-info" id="msg"></p>
                 </form>
                 <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
             </div>
@@ -57,43 +46,46 @@
     </div>
 </div>
 
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<!-- FOOTER ... có thể copy từ store.html -->
 
 <script>
-const CUSTOMER_API_BASE = "http://localhost:8083/api/customers";
+    const CUSTOMER_API = "http://localhost:8082";
 
-async function doRegister(e) {
-    e.preventDefault();
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    const body = {
-        fullName: document.getElementById("reg-name").value,
-        email: document.getElementById("reg-email").value,
-        password: document.getElementById("reg-password").value,
-        phone: document.getElementById("reg-phone").value,
-        address: document.getElementById("reg-address").value
-    };
+        const body = {
+            fullName: document.getElementById("fullName").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            phone: document.getElementById("phone").value,
+            address: document.getElementById("address").value
+        };
 
-    try {
-        const res = await fetch(CUSTOMER_API_BASE, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body)
-        });
-        if (!res.ok) throw new Error("Register failed");
+        try {
+            const res = await fetch(CUSTOMER_API + "/api/users/customer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
 
-        document.getElementById("register-message").innerText =
-            "Đăng ký thành công! Bạn có thể đăng nhập.";
-    } catch (e1) {
-        console.error(e1);
-        document.getElementById("register-message").innerText =
-            "Đăng ký thất bại.";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("register-form").addEventListener("submit", doRegister);
-});
+            if (res.ok) {
+                document.getElementById("msg").innerText = "Đăng ký thành công! Chuyển sang trang đăng nhập...";
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1500);
+            } else {
+                const text = await res.text();
+                document.getElementById("msg").innerText = "Đăng ký thất bại: " + text;
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById("msg").innerText = "Lỗi kết nối server";
+        }
+    });
 </script>
+
 </body>
 </html>

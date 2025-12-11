@@ -35,7 +35,50 @@
 		<![endif]-->
 
     </head>
-	<body>
+    <script>
+        async function loadProducts() {
+            try {
+                const res = await fetch("http://localhost:8081/api/products");
+                if (!res.ok) {
+                    console.error("Failed to load products", res.status);
+                    return;
+                }
+
+                const products = await res.json();
+                let html = "";
+
+                products.forEach(p => {
+                    html += `
+                    <div class="col-md-4 col-xs-6">
+                        <div class="product">
+                            <div class="product-img">
+                                <img src="img/${p.imageUrl || 'product01.png'}" alt="">
+                            </div>
+                            <div class="product-body">
+                                <p class="product-category">${p.categoryName || ''}</p>
+                                <h3 class="product-name">
+                                    <a href="product.html?id=${p.id}">${p.name}</a>
+                                </h3>
+                                <h4 class="product-price">${p.price}₫</h4>
+                            </div>
+                            <div class="add-to-cart">
+                                <button class="add-to-cart-btn">
+                                    <i class="fa fa-shopping-cart"></i> add to cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                document.getElementById("product-list").innerHTML = html;
+            } catch (err) {
+                console.error("Error loading products", err);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadProducts);
+    </script>
+    <body>
 		<!-- HEADER -->
 		<header>
 			<!-- TOP HEADER -->
@@ -47,9 +90,9 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
-						<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
-					</ul>
+						<li><a href="Login.html"><i class="fa fa-user-o"></i> My Account</a></li>
+                        <span id="welcomeUser"></span>
+                    </ul>
 				</div>
 			</div>
 			<!-- /TOP HEADER -->
@@ -504,6 +547,22 @@
         <script src="js/main.js"></script>
 
         <!-- Script gọi API -->
+        <script src="js/auth.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const user = getCurrentUser();
+                const accountLink = document.querySelector(".header-links .fa-user-o")?.parentElement;
+
+                if (user && accountLink) {
+                    accountLink.innerHTML = `<i class="fa fa-user-o"></i> ${user.fullName} (Logout)`;
+                    accountLink.href = "#";
+                    accountLink.onclick = function (e) {
+                        e.preventDefault();
+                        logout();
+                    };
+                }
+            });
+        </script>
         <script>
             const API_BASE = "http://localhost:8081";
 
@@ -588,6 +647,16 @@
                     console.error(e);
                 }
     }
+        document.addEventListener("DOMContentLoaded", function () {
+        const span = document.getElementById("welcomeUser");
+        const userJson = localStorage.getItem("currentUser");
+        if (userJson) {
+            const user = JSON.parse(userJson);
+            span.textContent = "Xin chào, " + user.fullName;
+        } else {
+            span.textContent = "Bạn chưa đăng nhập";
+        }
+    });
 
 
             async function loadBrands() {
