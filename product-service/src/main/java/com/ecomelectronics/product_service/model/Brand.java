@@ -1,4 +1,4 @@
-package com.ecomelectronics.customerservice.product_service.model;
+package com.ecomelectronics.product_service.model;
 
 import jakarta.persistence.*;
 import org.hibernate.Length;

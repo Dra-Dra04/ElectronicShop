@@ -19,28 +19,53 @@ import org.springframework.security.config.Customizer;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()) // API => tắt CSRF
-                .authorizeHttpRequests(auth -> auth
-                        // Cho phép đăng ký customer không cần login
-                        .requestMatchers(HttpMethod.POST, "/api/users/customer").permitAll()
-                        // Cho phép tạm thời tất cả path /api/auth/** (sau này làm login riêng)
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Các endpoint admin => ADMIN
-                        .requestMatchers("/api/users/admin/**", "/api/users/admins/**").hasRole("ADMIN")
-                        // Các thao tác xóa user chỉ cho ADMIN
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
-                        // Còn lại: chỉ cần đăng nhập (ADMIN hoặc CUSTOMER đều được)
-                        .anyRequest().authenticated()
-                )
-                // Dùng HTTP Basic cho đơn giản (Postman/Browser)
-                .httpBasic(basic -> {});
+      @Bean
+      public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+          http
+                  .cors(Customizer.withDefaults())
+                  .csrf(AbstractHttpConfigurer::disable)
+                  .authorizeHttpRequests(auth -> auth
 
-        return http.build();
-    }
+                          // PUBLIC
+                          .requestMatchers("/api/auth/**").permitAll()
+                          .requestMatchers(HttpMethod.POST, "/api/users/customer").permitAll()
+
+                          // ✅ Cho admin-service đọc danh sách user để đổ lên Admin UI
+                          .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+
+                          // ADMIN only (đúng path với controller của bạn)
+                          .requestMatchers(HttpMethod.POST, "/api/users/admin").permitAll() // hoặc hasRole("ADMIN") tùy bạn
+                          .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+
+                          // còn lại cần login
+                          .anyRequest().authenticated()
+                  )
+                  .httpBasic(Customizer.withDefaults());
+
+          return http.build();
+      }
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(Customizer.withDefaults())
+//                .csrf(csrf -> csrf.disable()) // API => tắt CSRF
+//                .authorizeHttpRequests(auth -> auth
+//                        // Cho phép đăng ký customer không cần login
+//                        .requestMatchers(HttpMethod.POST, "/api/users/customer").permitAll()
+//                        // Cho phép tạm thời tất cả path /api/auth/** (sau này làm login riêng)
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        // Các endpoint admin => ADMIN
+//                        .requestMatchers("/api/users/admin").hasRole("ADMIN")
+//                        .requestMatchers("/api/users/admins").hasRole("ADMIN")
+//                        // Các thao tác xóa user chỉ cho ADMIN
+//                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+//                        // Còn lại: chỉ cần đăng nhập (ADMIN hoặc CUSTOMER đều được)
+//                        .anyRequest().authenticated()
+//                )
+//                // Dùng HTTP Basic cho đơn giản (Postman/Browser)
+//                .httpBasic(basic -> {});
+//
+//        return http.build();
+//    }
 
     // Password encoder sử dụng BCrypt
     @Bean

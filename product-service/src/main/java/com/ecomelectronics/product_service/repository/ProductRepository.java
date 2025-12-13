@@ -1,7 +1,7 @@
-package com.ecomelectronics.customerservice.product_service.repository;
+package com.ecomelectronics.product_service.repository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.ecomelectronics.customerservice.product_service.model.Product;
+import com.ecomelectronics.product_service.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

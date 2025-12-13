@@ -1,10 +1,10 @@
-package com.ecomelectronics.customerservice.product_service.controller;
+package com.ecomelectronics.product_service.controller;
 
-import com.ecomelectronics.customerservice.product_service.dto.ProductDto;
-import com.ecomelectronics.customerservice.product_service.model.Category;
-import com.ecomelectronics.customerservice.product_service.model.Product;
-import com.ecomelectronics.customerservice.product_service.repository.CategoryRepository;
-import com.ecomelectronics.customerservice.product_service.repository.ProductRepository;
+import com.ecomelectronics.product_service.dto.ProductDto;
+import com.ecomelectronics.product_service.model.Category;
+import com.ecomelectronics.product_service.model.Product;
+import com.ecomelectronics.product_service.repository.CategoryRepository;
+import com.ecomelectronics.product_service.repository.ProductRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

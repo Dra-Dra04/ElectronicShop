@@ -1,4 +1,4 @@
-package com.ecomelectronics.customerservice.product_service;
+package com.ecomelectronics.product_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
