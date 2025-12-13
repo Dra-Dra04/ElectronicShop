@@ -9,6 +9,7 @@ public class ProductDto {
     private String description;
     private BigDecimal price;
     private String brand;
+    private Integer stock;
     private String imageUrl;
     private Long categoryId;
     private String categoryName;
@@ -27,6 +28,9 @@ public class ProductDto {
 
     public String getBrand() { return brand; }
     public void setBrand(String brand) { this.brand = brand; }
+
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }

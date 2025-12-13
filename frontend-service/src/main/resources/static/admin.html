@@ -577,7 +577,6 @@
 
 <!-- ADDED: JavaScript gọi API admin-service -->
 <script>
-    // Đổi base URL này nếu admin-service chạy port khác
     const ADMIN_API_BASE = 'http://localhost:8085/api/admin';
 
     // Khi trang load xong
@@ -586,6 +585,7 @@
     loadProducts();
     loadBrands();
     loadCategories();
+    loadUsers();
 
     // Save new product
     $('#btn-save-product').on('click', function () {
@@ -1007,6 +1007,91 @@
             }
         });
     }
+    // ========== USERS ==========
+    function loadUsers(role) {
+        let url = ADMIN_API_BASE + '/users';
+        if (role) {
+            url += '?role=' + role;
+        }
+
+        $.get(url)
+            .done(function (users) {
+                const $tbody = $('#user-table-body');
+                $tbody.empty();
+
+                if (!users || users.length === 0) {
+                    $tbody.append(
+                        '<tr><td colspan="6" class="text-center">No users found</td></tr>'
+                    );
+                    return;
+                }
+
+                users.forEach(function (u) {
+                    const statusLabel = u.active
+                        ? '<span class="label label-success">Active</span>'
+                        : '<span class="label label-default">Inactive</span>';
+
+                    const rowHtml = `
+                        <tr>
+                            <td>#${u.id}</td>
+                            <td>${u.fullName || ''}</td>
+                            <td>${u.email || ''}</td>
+                            <td>${u.role || ''}</td>
+                            <td>${statusLabel}</td>
+                            <td>
+                                <button class="btn btn-sm btn-default" onclick="viewUser(${u.id})">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    $tbody.append(rowHtml);
+                });
+            })
+            .fail(function () {
+                console.error('Failed to load users');
+                alert('Không tải được danh sách user. Kiểm tra lại admin-service / customer-service.');
+            });
+    }
+
+    function deleteUser(id) {
+        if (!confirm('Bạn có chắc muốn xoá user #' + id + ' ?')) {
+            return;
+        }
+
+        $.ajax({
+            url: ADMIN_API_BASE + '/users/' + id,
+            method: 'DELETE',
+            success: function () {
+                loadUsers();
+            },
+            error: function () {
+                alert('Xoá user thất bại. Kiểm tra lại backend.');
+            }
+        });
+    }
+
+    function viewUser(id) {
+        $.get(ADMIN_API_BASE + '/users/' + id)
+            .done(function (u) {
+                alert(
+                    'User #' + u.id +
+                    '\nTên: ' + (u.fullName || '') +
+                    '\nEmail: ' + (u.email || '') +
+                    '\nPhone: ' + (u.phone || '') +
+                    '\nĐịa chỉ: ' + (u.address || '') +
+                    '\nRole: ' + (u.role || '') +
+                    '\nActive: ' + (u.active ? 'Yes' : 'No')
+                );
+            })
+            .fail(function () {
+                alert('Không load được chi tiết user');
+            });
+    }
+
 </script>
 
 </body>
