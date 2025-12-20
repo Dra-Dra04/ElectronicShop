@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán Momo</title>
+    
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .momo-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .momo-header {
+            background: linear-gradient(135deg, #A50064 0%, #D10024 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .momo-logo {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .momo-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .momo-content {
+            padding: 30px 25px;
+        }
+        
+        .payment-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #212529;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .amount-row {
+            background: #fff;
+            border: 2px solid #A50064;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .amount-label {
+            color: #6c757d;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .amount-value {
+            color: #A50064;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .qr-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        
+        .qr-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: #fff;
+            border: 3px solid #A50064;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(165, 0, 100, 0.2);
+        }
+        
+        .momo-code {
+            margin-top: 25px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px dashed #A50064;
+        }
+        
+        .code-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .code-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #A50064;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .code-value:hover {
+            background: #fff3f5;
+            transform: scale(1.02);
+        }
+        
+        .code-value.copied {
+            color: #28a745;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .merchant-info {
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 20px;
+        }
+        
+        .merchant-name {
+            color: #212529;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .merchant-desc {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        .status-check {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .status-message {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+        
+        .status-success {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            color: #ffc107;
+        }
+        
+        .link-momo-app {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: #A50064;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .link-momo-app:hover {
+            background: #D10024;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 0, 100, 0.3);
+        }
+        
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #fc8181;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="momo-container">
+        <div class="momo-header">
+            <div class="momo-logo">MoMo</div>
+            <div class="momo-subtitle">Ví điện tử</div>
+        </div>
+        
+        <div class="momo-content">
+            <div class="error-message" id="error-message"></div>
+            
+            <div class="payment-info">
+                <div class="info-row">
+                    <span class="info-label">Mã đơn hàng</span>
+                    <span class="info-value" id="order-id">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thời gian</span>
+                    <span class="info-value" id="payment-time">-</span>
+                </div>
+            </div>
+            
+            <div class="amount-row">
+                <div class="amount-label">Số tiền thanh toán</div>
+                <div class="amount-value" id="amount">0 ₫</div>
+            </div>
+            
+            <div class="qr-section">
+                <div class="qr-title">Quét mã QR để thanh toán</div>
+                <div id="qrcode"></div>
+                
+                <div class="momo-code">
+                    <div class="code-label">Hoặc nhập mã thanh toán</div>
+                    <div class="code-value" id="momo-payment-code" onclick="copyMomoCode()" title="Click để copy">-</div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <strong>Hướng dẫn thanh toán:</strong>
+                <ol>
+                    <li>Mở ứng dụng MoMo trên điện thoại</li>
+                    <li>Chọn "Quét mã" hoặc "Thanh toán"</li>
+                    <li>Quét QR code hoặc nhập mã thanh toán</li>
+                    <li>Xác nhận thanh toán trong app MoMo</li>
+                </ol>
+            </div>
+            
+            <a href="#" id="link-momo-app" class="link-momo-app" onclick="openMomoApp(event)">
+                <i class="fa fa-mobile"></i> Mở app MoMo giả lập
+            </a>
+            
+            <div class="action-buttons">
+                <button class="btn-action btn-success" onclick="simulateSuccess()">
+                    <i class="fa fa-check"></i> Thanh toán thành công
+                </button>
+                <button class="btn-action btn-danger" onclick="simulateFailed()">
+                    <i class="fa fa-times"></i> Thanh toán thất bại
+                </button>
+            </div>
+            
+            <div class="merchant-info">
+                <div class="merchant-name">Electronic Shop</div>
+                <div class="merchant-desc">Thanh toán đơn hàng trực tuyến</div>
+            </div>
+            
+            <div class="status-check">
+                <div class="status-message status-pending" id="status-message">
+                    <i class="fa fa-clock-o"></i> Đang chờ thanh toán...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/payment-callback.js"></script>
+    <script>
+        const PAYMENT_SERVICE = "http://localhost:8086/api/payments";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentId = urlParams.get("paymentId");
+
+        let paymentStatusInterval = null;
+        let currentPaymentCode = null;
+
+        // Format số tiền
+        function formatMoney(amount) {
+            return Number(amount || 0).toLocaleString("vi-VN") + " ₫";
+        }
+
+        // Format thời gian
+        function formatDateTime(date) {
+            if (!date) return "-";
+            const d = new Date(date);
+            return d.toLocaleString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        // Hiển thị lỗi
+        function showError(message) {
+            const errorEl = document.getElementById("error-message");
+            errorEl.textContent = message;
+            errorEl.classList.add("show");
+            setTimeout(() => {
+                errorEl.classList.remove("show");
+            }, 5000);
+        }
+
+        // Copy mã MoMo
+        function copyMomoCode() {
+            const codeEl = document.getElementById("momo-payment-code");
+            const code = codeEl.textContent;
+            if (code && code !== '-') {
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = codeEl.textContent;
+                    codeEl.textContent = "Đã copy!";
+                    codeEl.classList.add("copied");
+                    setTimeout(() => {
+                        codeEl.textContent = originalText;
+                        codeEl.classList.remove("copied");
+                    }, 2000);
+                }).catch(() => {
+                    alert("Mã thanh toán MoMo: " + code);
+                });
+            }
+        }
+
+        // Mở app MoMo
+        function openMomoApp(event) {
+            event.preventDefault();
+            if (currentPaymentCode) {
+                const appUrl = `momo-app.html?paymentCode=${currentPaymentCode}`;
+                window.open(appUrl, 'momoApp', 'width=414,height=800,resizable=yes,scrollbars=yes');
+            }
+        }
+
+        // Load thông tin payment và tạo QR code
+        async function loadPaymentInfo() {
+            if (!paymentId) {
+                showError("Không tìm thấy mã thanh toán!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${PAYMENT_SERVICE}/${paymentId}`);
+                if (!res.ok) throw new Error("Không thể tải thông tin thanh toán");
+                
+                const data = await res.json();
+                
+                // Hiển thị thông tin
+                document.getElementById("order-id").textContent = "#" + data.orderId;
+                document.getElementById("amount").textContent = formatMoney(data.amount);
+                document.getElementById("payment-time").textContent = formatDateTime(data.createdAt);
+                
+                // Hiển thị mã MoMo và tạo QR code
+                if (data.momoPaymentCode && data.method === "MOMO") {
+                    currentPaymentCode = data.momoPaymentCode;
+                    document.getElementById("momo-payment-code").textContent = data.momoPaymentCode;
+                    
+                    // Lưu mã thanh toán vào localStorage để app MoMo có thể đọc
+                    localStorage.setItem(`momo_payment_${data.momoPaymentCode}`, JSON.stringify({
+                        paymentId: paymentId,
+                        orderId: data.orderId,
+                        amount: data.amount,
+                        createdAt: data.createdAt,
+                        status: data.status,
+                        momoPaymentCode: data.momoPaymentCode
+                    }));
+                    
+                    // Tạo QR code chứa mã MoMo
+                    // Format QR: MOMO:paymentCode:amount:orderId
+                    const qrData = `MOMO:${data.momoPaymentCode}:${data.amount}:${data.orderId}`;
+                    
+                    // Xóa QR code cũ nếu có
+                    document.getElementById("qrcode").innerHTML = "";
+                    
+                    // Tạo QR code mới
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: qrData,
+                        width: 250,
+                        height: 250,
+                        colorDark: "#A50064",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } else {
+                    showError("Không tìm thấy mã thanh toán MoMo!");
+                }
+                
+                // Kiểm tra trạng thái thanh toán định kỳ
+                checkPaymentStatus();
+                paymentStatusInterval = setInterval(checkPaymentStatus, 2000); // Check mỗi 2 giây
+                
+            } catch (e) {
+                console.error(e);
+                showError("Không thể tải thông tin thanh toán: " + e.message);
+            }
+        }
+
+        // Kiểm tra trạng thái thanh toán
+        async function checkPaymentStatus() {
+            if (!paymentId) return;
+            
+            try {
+                const res = await fetch(`${PAYMENT_SERVICE}/${paymentId}`);
+                if (!res.ok) return;
+                
+                const data = await res.json();
+                const statusEl = document.getElementById("status-message");
+                
+                if (data.status === "PAID") {
+                    // Dừng kiểm tra định kỳ
+                    if (paymentStatusInterval) {
+                        clearInterval(paymentStatusInterval);
+                        paymentStatusInterval = null;
+                    }
+                    
+                    statusEl.className = "status-message status-success";
+                    statusEl.innerHTML = '<i class="fa fa-check-circle"></i> Thanh toán thành công! Đang chuyển hướng...';
+                    
+                    // Clear cart và redirect sau 2 giây
+                    setTimeout(() => {
+                        localStorage.removeItem("cart");
+                        window.location.href = "orderhistory.html";
+                    }, 2000);
+                } else if (data.status === "FAILED") {
+                    // Dừng kiểm tra định kỳ
+                    if (paymentStatusInterval) {
+                        clearInterval(paymentStatusInterval);
+                        paymentStatusInterval = null;
+                    }
+                    
+                    statusEl.className = "status-message";
+                    statusEl.innerHTML = '<span style="color: #dc3545;"><i class="fa fa-times-circle"></i> Thanh toán thất bại</span>';
+                }
+            } catch (e) {
+                console.error("Error checking payment status:", e);
+            }
+        }
+
+        // Lắng nghe message từ app MoMo
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'PAYMENT_SUCCESS') {
+                // Reload ngay lập tức khi nhận được thông báo thanh toán thành công
+                checkPaymentStatus();
+            }
+        });
+
+        // Giả lập thanh toán thành công
+        async function simulateSuccess() {
+            const statusEl = document.getElementById("status-message");
+            statusEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+            
+            try {
+                await sendPaymentCallback(paymentId, 'SUCCESS');
+                statusEl.className = "status-message status-success";
+                statusEl.innerHTML = '<i class="fa fa-check-circle"></i> Thanh toán thành công! Đang chuyển hướng...';
+                
+                setTimeout(() => {
+                    localStorage.removeItem("cart");
+                    window.location.href = "orderhistory.html";
+                }, 2000);
+            } catch (error) {
+                statusEl.className = "status-message";
+                statusEl.innerHTML = '<span style="color: #dc3545;">Có lỗi xảy ra: ' + error.message + '</span>';
+            }
+        }
+
+        // Giả lập thanh toán thất bại
+        async function simulateFailed() {
+            const statusEl = document.getElementById("status-message");
+            statusEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+            
+            try {
+                await sendPaymentCallback(paymentId, 'FAILED');
+                statusEl.className = "status-message";
+                statusEl.innerHTML = '<span style="color: #dc3545;"><i class="fa fa-times-circle"></i> Thanh toán thất bại</span>';
+            } catch (error) {
+                statusEl.innerHTML = '<span style="color: #dc3545;">Có lỗi xảy ra: ' + error.message + '</span>';
+            }
+        }
+
+        // Load khi trang được tải
+        document.addEventListener("DOMContentLoaded", loadPaymentInfo);
+    </script>
+</body>
+</html>

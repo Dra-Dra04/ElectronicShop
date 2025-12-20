@@ -280,25 +280,26 @@
                     <!-- TAB: ORDERS -->
                     <div id="orders" class="tab-pane fade">
                         <h3 class="section-title">Order Management</h3>
+
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>ORDER ID</th>
+                                    <th>ADDRESS</th>
+                                    <th>DATE</th>
+                                    <th>TOTAL</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th>
                                 </tr>
                                 </thead>
-                                <!-- ADDED: tbody với id để sau này load Orders bằng API -->
                                 <tbody id="order-table-body">
-                                <!-- TODO: load orders from /api/admin/orders -->
+                                <!-- Orders will be injected by JS -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
 
                     <!-- TAB: USERS -->
                     <div id="users" class="tab-pane fade">
@@ -586,6 +587,7 @@
     loadBrands();
     loadCategories();
     loadUsers();
+    loadOrders();
 
     // Save new product
     $('#btn-save-product').on('click', function () {
@@ -1092,7 +1094,107 @@
             });
     }
 
+ /* ========== ORDERS ========== */
+const ORDER_STATUSES = ["CREATED", "APPROVED", "SHIPPING", "DELIVERED", "CANCELLED"];
+
+function formatMoney(v) {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(v || 0));
+}
+function formatDate(d) {
+  if (!d) return '-';
+  return String(d).replace('T', ' ').substring(0, 19);
+}
+
+// Load orders list
+function loadOrders() {
+  const $msg = $('#orders-msg');
+  const $tbody = $('#order-table-body');
+
+  $msg.text('Loading...');
+  $tbody.empty();
+
+  $.get(ADMIN_API_BASE + '/orders')
+    .done(function (orders) {
+      if (!orders || orders.length === 0) {
+        $tbody.append('<tr><td colspan="6" class="text-center">No orders found</td></tr>');
+        $msg.text('');
+        return;
+      }
+
+      orders.forEach(function (o) {
+        // DTO: OrderSummaryResponse
+        const id = o.id;
+        const status = (o.status || 'CREATED').toUpperCase();
+        const totalAmount = o.totalAmount || 0;
+        const createdAt = o.createdAt;
+        const shippingAddress = (o.shippingAddress || '').trim();
+
+        const options = ORDER_STATUSES.map(st =>
+          `<option value="${st}" ${st === status ? 'selected' : ''}>${st}</option>`
+        ).join('');
+
+        const row = `
+          <tr data-order-id="${id}">
+            <td><b>#${id}</b></td>
+            <td>${shippingAddress || '-'}</td>
+            <td>${formatDate(createdAt)}</td>
+            <td><b>${formatMoney(totalAmount)}</b></td>
+            <td>
+              <select class="input order-status-select" style="height:34px; padding:0 10px;">
+                ${options}
+              </select>
+              <div class="text-muted" style="font-size:12px; margin-top:6px;">
+                ${shippingAddress ? ('Ship: ' + shippingAddress) : 'Ship: -'}
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-xs btn-red btn-order-save">
+                <i class="fa fa-save"></i> Save
+              </button>
+            </td>
+          </tr>
+        `;
+        $tbody.append(row);
+      });
+
+      $msg.text(`Loaded ${orders.length} orders`);
+    })
+    .fail(function (xhr) {
+      console.error("GET /orders failed:", xhr.status, xhr.responseText);
+      $msg.text('');
+      alert('Không tải được danh sách đơn hàng (GET /api/admin/orders)\n'
+        + 'Status: ' + xhr.status + '\n'
+        + (xhr.responseText || ''));
+    });
+}
+
+// Save status (PATCH)
+$(document).on('click', '.btn-order-save', function () {
+  const $tr = $(this).closest('tr');
+  const orderId = $tr.data('order-id');
+  const newStatus = $tr.find('.order-status-select').val();
+
+  $.ajax({
+    url: ADMIN_API_BASE + '/orders/' + orderId + '/status',
+    method: 'PATCH',
+    contentType: 'application/json',
+    data: JSON.stringify({ status: newStatus }), // UpdateOrderStatusRequest
+    success: function () {
+      alert('Đổi trạng thái thành công: ' + newStatus);
+      loadOrders();
+    },
+    error: function (xhr) {
+      console.error("PATCH status failed:", xhr.status, xhr.responseText);
+      alert('Đổi trạng thái thất bại.\n'
+        + 'Status: ' + xhr.status + '\n'
+        + (xhr.responseText || ''));
+    }
+  });
+});
+
+
 </script>
+
 
 </body>
 </html>

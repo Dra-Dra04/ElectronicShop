@@ -99,48 +99,28 @@
 								</div>
 								<!-- /Wishlist -->
 
-								<!-- Cart -->
-								<div class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-										<i class="fa fa-shopping-cart"></i>
-										<span>Your Cart</span>
-										<div class="qty">3</div>
-									</a>
-									<div class="cart-dropdown">
-										<div class="cart-list">
-											<div class="product-widget">
-												<div class="product-img">
-													<img src="./img/product01.png" alt="">
-												</div>
-												<div class="product-body">
-													<h3 class="product-name"><a href="#">product name goes here</a></h3>
-													<h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
-												</div>
-												<button class="delete"><i class="fa fa-close"></i></button>
-											</div>
+                                <!-- Cart -->
+                                <div class="dropdown">
+                                    <a href="cart.html" class="cart-link">
+                                        <i class="fa fa-shopping-cart"></i>
+                                        <span>Your Cart</span>
+                                        <div class="qty">3</div>
+                                    </a>
+                                    <div class="cart-dropdown">
+                                        <div class="cart-list"></div>
 
-											<div class="product-widget">
-												<div class="product-img">
-													<img src="./img/product02.png" alt="">
-												</div>
-												<div class="product-body">
-													<h3 class="product-name"><a href="#">product name goes here</a></h3>
-													<h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-												</div>
-												<button class="delete"><i class="fa fa-close"></i></button>
-											</div>
-										</div>
-										<div class="cart-summary">
-											<small>3 Item(s) selected</small>
-											<h5>SUBTOTAL: $2940.00</h5>
-										</div>
-										<div class="cart-btns">
-											<a href="#">View Cart</a>
-											<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
-										</div>
-									</div>
-								</div>
-								<!-- /Cart -->
+                                        <div class="cart-summary">
+                                            <small><span id="cart-items-count">0</span> Item(s) selected</small>
+                                            <h5>SUBTOTAL: <span id="cart-subtotal-mini">0 ₫</span></h5>
+                                        </div>
+
+                                        <div class="cart-btns">
+                                            <a href="cart.html">View Cart</a>
+                                            <a href="checkout.html">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /Cart -->
 
 								<!-- Menu Toogle -->
 								<div class="menu-toggle">
@@ -170,13 +150,7 @@
 				<div id="responsive-nav">
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#">Hot Deals</a></li>
-						<li><a href="#">Categories</a></li>
-						<li><a href="#">Laptops</a></li>
-						<li><a href="#">Smartphones</a></li>
-						<li><a href="#">Cameras</a></li>
-						<li><a href="#">Accessories</a></li>
+						<li class="active"><a href="store.html">Home</a></li>
 					</ul>
 					<!-- /NAV -->
 				</div>
@@ -195,7 +169,7 @@
 					<div class="col-md-12">
 						<h3 class="breadcrumb-header">Checkout</h3>
 						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
+							<li><a href="store.html">Home</a></li>
 							<li class="active">Checkout</li>
 						</ul>
 					</div>
@@ -238,67 +212,10 @@
 								<input class="input" type="text" name="country" placeholder="Country">
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="zip-code" placeholder="ZIP Code">
-							</div>
-							<div class="form-group">
 								<input class="input" type="tel" name="tel" placeholder="Telephone">
-							</div>
-							<div class="form-group">
-								<div class="input-checkbox">
-									<input type="checkbox" id="create-account">
-									<label for="create-account">
-										<span></span>
-										Create Account?
-									</label>
-									<div class="caption">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
-										<input class="input" type="password" name="password" placeholder="Enter Your Password">
-									</div>
-								</div>
 							</div>
 						</div>
 						<!-- /Billing Details -->
-
-						<!-- Shiping Details -->
-						<div class="shiping-details">
-							<div class="section-title">
-								<h3 class="title">Shiping address</h3>
-							</div>
-							<div class="input-checkbox">
-								<input type="checkbox" id="shiping-address">
-								<label for="shiping-address">
-									<span></span>
-									Ship to a diffrent address?
-								</label>
-								<div class="caption">
-									<div class="form-group">
-										<input class="input" type="text" name="first-name" placeholder="First Name">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="last-name" placeholder="Last Name">
-									</div>
-									<div class="form-group">
-										<input class="input" type="email" name="email" placeholder="Email">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="address" placeholder="Address">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="city" placeholder="City">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="country" placeholder="Country">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="zip-code" placeholder="ZIP Code">
-									</div>
-									<div class="form-group">
-										<input class="input" type="tel" name="tel" placeholder="Telephone">
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- /Shiping Details -->
 
 						<!-- Order notes -->
 						<div class="order-notes">
@@ -317,65 +234,58 @@
 								<div><strong>PRODUCT</strong></div>
 								<div><strong>TOTAL</strong></div>
 							</div>
-							<div class="order-products">
-								<div class="order-col">
-									<div>1x Product Name Goes Here</div>
-									<div>$980.00</div>
-								</div>
-								<div class="order-col">
-									<div>2x Product Name Goes Here</div>
-									<div>$980.00</div>
-								</div>
-							</div>
-							<div class="order-col">
-								<div>Shiping</div>
-								<div><strong>FREE</strong></div>
-							</div>
-							<div class="order-col">
-								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total">$2940.00</strong></div>
-							</div>
+                            <div id="your-order-items"></div>
+
+                            <div class="order-col">
+                                <div>Shipping</div>
+                                <div><strong>FREE</strong></div>
+                            </div>
+
+                            <div class="order-col">
+                                <div><strong>TOTAL</strong></div>
+                                <div><strong class="order-total" id="your-order-total">0 ₫</strong></div>
+                            </div>
 						</div>
 						<div class="payment-method">
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-1">
-								<label for="payment-1">
-									<span></span>
-									Direct Bank Transfer
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>
+							<div class="section-title" style="margin-bottom: 15px;">
+								<h4 class="title" style="font-size: 16px; margin-bottom: 10px;">Phương thức thanh toán</h4>
 							</div>
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-2">
-								<label for="payment-2">
-									<span></span>
-									Cheque Payment
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							<div class="payment-options" style="display: flex; flex-direction: column; gap: 12px;">
+								<div class="payment-option" data-payment="COD" style="border: 2px solid #e4e7ed; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s; background: #fff;">
+									<label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+										<input type="radio" name="payment" value="COD" checked style="margin-right: 12px; width: 20px; height: 20px; cursor: pointer;">
+										<div style="flex: 1;">
+											<div style="font-weight: 600; color: #333; margin-bottom: 5px;">
+												<i class="fa fa-truck" style="margin-right: 8px; color: #D10024;"></i>
+												Thanh toán khi nhận hàng (COD)
+											</div>
+											<div style="font-size: 12px; color: #666;">
+												Bạn sẽ thanh toán bằng tiền mặt khi nhận được hàng
+											</div>
+										</div>
+									</label>
 								</div>
-							</div>
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-3">
-								<label for="payment-3">
-									<span></span>
-									Paypal System
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+								<div class="payment-option" data-payment="MOMO" style="border: 2px solid #e4e7ed; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s; background: #fff;">
+									<label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+										<input type="radio" name="payment" value="MOMO" style="margin-right: 12px; width: 20px; height: 20px; cursor: pointer;">
+										<div style="flex: 1;">
+											<div style="font-weight: 600; color: #333; margin-bottom: 5px;">
+												<i class="fa fa-credit-card" style="margin-right: 8px; color: #D10024;"></i>
+												Thanh toán Online (Momo)
+											</div>
+											<div style="font-size: 12px; color: #666;">
+												Thanh toán trực tuyến qua ví điện tử Momo
+											</div>
+										</div>
+									</label>
 								</div>
 							</div>
 						</div>
 						<div class="input-checkbox">
 							<input type="checkbox" id="terms">
-							<label for="terms">
-								<span></span>
-								I've read and accept the <a href="#">terms & conditions</a>
-							</label>
 						</div>
-						<a href="#" class="primary-btn order-submit">Place order</a>
+						<button class="primary-btn order-submit" id="btn-place-order">Place order</button>
 					</div>
 					<!-- /Order Details -->
 				</div>
@@ -384,42 +294,6 @@
 			<!-- /container -->
 		</div>
 		<!-- /SECTION -->
-
-		<!-- NEWSLETTER -->
-		<div id="newsletter" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<div class="newsletter">
-							<p>Sign Up for the <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Enter Your Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
-							</form>
-							<ul class="newsletter-follow">
-								<li>
-									<a href="#"><i class="fa fa-facebook"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-instagram"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-pinterest"></i></a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /NEWSLETTER -->
 
 		<!-- FOOTER -->
 		<footer id="footer">
@@ -525,5 +399,196 @@
 		<script src="js/jquery.zoom.min.js"></script>
 		<script src="js/main.js"></script>
 
-	</body>
+        <script>
+            function formatMoney(v) {
+              return Number(v || 0).toLocaleString("vi-VN") + " ₫";
+            }
+
+            function renderYourOrder() {
+              const container = document.getElementById("your-order-items");
+              const totalEl = document.getElementById("your-order-total");
+              if (!container || !totalEl) return;
+
+              const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+              container.innerHTML = "";
+
+              if (!cart || cart.length === 0) {
+                container.innerHTML = `
+                  <div class="order-col">
+                    <div>Giỏ hàng trống</div>
+                    <div>${formatMoney(0)}</div>
+                  </div>
+                `;
+                totalEl.textContent = formatMoney(0);
+                return;
+              }
+
+              let total = 0;
+
+              cart.forEach(item => {
+                const qty = Math.max(1, parseInt(item.quantity || 1));
+                const price = Number(item.price || 0);
+                const lineTotal = qty * price;
+                total += lineTotal;
+
+                container.innerHTML += `
+                  <div class="order-col">
+                    <div>${qty}x ${item.name}</div>
+                    <div>${formatMoney(lineTotal)}</div>
+                  </div>
+                `;
+              });
+
+              totalEl.textContent = formatMoney(total);
+            }
+
+            document.addEventListener("DOMContentLoaded", renderYourOrder);
+        </script>
+
+        <script>
+            const ORDER_API = "http://localhost:8083/api/orders";
+            const PAYMENT_API = "http://localhost:8086/api/payments";
+
+            function getCart() {
+              return JSON.parse(localStorage.getItem("cart") || "[]");
+            }
+
+            function getPaymentMethod() {
+                const v = document.querySelector("input[name='payment']:checked")?.value;
+                if (v === "PAYPAL") return "PAYPAL";
+                if (v === "BANK") return "MOMO";     // map tạm
+                if (v === "CHEQUE") return "VNPAY";  // map tạm
+                return "MOMO";
+              }
+
+            async function placeOrder() {
+              const cart = getCart();
+              if (cart.length === 0) return alert("Giỏ hàng trống!");
+
+              // Lấy userId theo cách bạn đang lưu sau login
+              const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+              const userId = user?.id;
+              if (!userId) {
+                alert("Bạn cần đăng nhập trước khi đặt hàng!");
+                window.location.href = "Login.html";
+                return;
+              }
+
+              // Lấy address từ input Address trong form Electro (đúng placeholder “Address”)
+              const addressInput = document.querySelector("input[placeholder='Address']");
+              const shippingAddress = addressInput?.value?.trim() || "";
+              if (!shippingAddress) return alert("Vui lòng nhập địa chỉ giao hàng!");
+                const phone = document.querySelector("input[name='tel']")?.value?.trim() || "";
+                const paymentMethod = document.querySelector("input[name='payment']:checked")?.value || "COD";
+
+                const orderPayload = {
+                  userId,
+                  shippingAddress,
+                  phone,
+                  paymentMethod,
+                  orderItems: cart.map(i => ({ productId: i.productId, quantity: i.quantity }))
+                };
+
+                try {
+                  const orderRes = await fetch(ORDER_API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderPayload)
+                  });
+
+                  if (!orderRes.ok) throw new Error(await orderRes.text());
+                  const orderData = await orderRes.json();
+
+                  // order-service đang trả: {id,totalAmount,status}
+                  const orderId = orderData.id;
+                  const totalAmount = Number(orderData.totalAmount || 0);
+
+                  // Lưu tạm orderId để sau thanh toán quay về history biết tải cái gì
+                  localStorage.setItem("lastOrderId", String(orderId));
+
+                  // 2) Nếu là thanh toán online, tạo Payment và redirect sang trang thanh toán
+                  if (paymentMethod === "MOMO" || paymentMethod === "VNPAY" || paymentMethod === "PAYPAL") {
+                    const payRes = await fetch(PAYMENT_API, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        orderId: orderId,
+                        method: paymentMethod,
+                        amount: totalAmount
+                      })
+                    });
+
+                    if (!payRes.ok) throw new Error(await payRes.text());
+                    const payData = await payRes.json();
+
+                    if (!payData.payUrl) throw new Error("Không nhận được payUrl từ payment-service");
+
+                    // 3) Redirect sang trang thanh toán
+                    localStorage.setItem("lastPayUrl", payData.payUrl);
+                    window.location.href = payData.payUrl;
+                  } else {
+                    // COD - thanh toán khi nhận hàng, chuyển thẳng về lịch sử đơn hàng
+                    localStorage.removeItem("cart");
+                    alert("Đặt hàng thành công! Bạn sẽ thanh toán khi nhận hàng.");
+                    window.location.href = "orderhistory.html";
+                  }
+
+                } catch (e) {
+                  console.error(e);
+                  alert("Đặt hàng / thanh toán thất bại: " + e.message);
+                }
+              }
+
+            // Xử lý click vào payment option cards
+            function initPaymentOptions() {
+              const paymentOptions = document.querySelectorAll(".payment-option");
+              const radioInputs = document.querySelectorAll("input[name='payment']");
+
+              // Function để update styling
+              function updatePaymentOptionStyles() {
+                paymentOptions.forEach((option, index) => {
+                  const radio = radioInputs[index];
+                  if (radio.checked) {
+                    option.style.borderColor = "#D10024";
+                    option.style.backgroundColor = "#fff5f5";
+                    option.style.boxShadow = "0 2px 8px rgba(209, 0, 36, 0.1)";
+                  } else {
+                    option.style.borderColor = "#e4e7ed";
+                    option.style.backgroundColor = "#fff";
+                    option.style.boxShadow = "none";
+                  }
+                });
+              }
+
+              // Click vào card sẽ chọn radio button
+              paymentOptions.forEach((option, index) => {
+                option.addEventListener("click", (e) => {
+                  // Không trigger nếu click vào radio button (đã có sẵn handler)
+                  if (e.target.type !== "radio") {
+                    radioInputs[index].checked = true;
+                    updatePaymentOptionStyles();
+                  }
+                });
+              });
+
+              // Khi radio button thay đổi
+              radioInputs.forEach((radio) => {
+                radio.addEventListener("change", updatePaymentOptionStyles);
+              });
+
+              // Khởi tạo styling ban đầu
+              updatePaymentOptionStyles();
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+              initPaymentOptions();
+              
+              document.getElementById("btn-place-order")?.addEventListener("click", (e) => {
+                e.preventDefault();
+                placeOrder();
+              });
+            });
+        </script>
+
+    </body>
 </html>

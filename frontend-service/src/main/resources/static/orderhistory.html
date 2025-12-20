@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electro - Order History</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/slick.css"/>
+    <link type="text/css" rel="stylesheet" href="css/slick-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css"/>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+
+    <style>
+        /* Badge trạng thái theo style Electro */
+        .status-badge{
+          display:inline-block;
+          padding:6px 10px;
+          border-radius:999px;
+          font-size:12px;
+          font-weight:700;
+          letter-spacing:.2px;
+        }
+        .st-created { background:#fff3cd; color:#856404; border:1px solid #ffeeba; }
+        .st-pending { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
+        .st-approved { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+        .st-shipping { background:#cce5ff; color:#004085; border:1px solid #b8daff; }
+        .st-delivered{ background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+        .st-canceled { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+
+        .order-actions .btn{ margin-right:6px; }
+        .order-actions .btn:last-child{ margin-right:0; }
+
+        .panel-soft{
+          border:1px solid #e4e7ed;
+          border-radius:8px;
+          background:#fff;
+          padding:18px;
+        }
+
+        .table > thead > tr > th { background:#f8f9fa; }
+        .muted { color:#8d99ae; }
+        .empty-state{
+          text-align:center;
+          padding:40px 10px;
+          border:1px dashed #e4e7ed;
+          border-radius:8px;
+          background:#fff;
+        }
+    </style>
+</head>
+
+<body>
+<!-- HEADER (bạn có thể copy y như store.html/checkout.html để đồng bộ) -->
+<header>
+    <div id="top-header">
+        <div class="container">
+            <ul class="header-links pull-left">
+                <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
+                <li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
+            </ul>
+            <ul class="header-links pull-right">
+                <li><a href="Login.html" id="accountLink"><i class="fa fa-user-o"></i> My Account</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="header-logo">
+                        <a href="store.html" class="logo"><img src="./img/logo.png" alt=""></a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="header-search">
+                        <form onsubmit="return false;">
+                            <select class="input-select">
+                                <option value="0">All Categories</option>
+                            </select>
+                            <input class="input" placeholder="Search here">
+                            <button class="search-btn">Search</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-3 clearfix">
+                    <div class="header-ctn">
+                        <div>
+                            <a href="#">
+                                <i class="fa fa-heart-o"></i>
+                                <span>Your Wishlist</span>
+                                <div class="qty">0</div>
+                            </a>
+                        </div>
+
+                        <div class="dropdown">
+                            <a href="cart.html" class="cart-link">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>Your Cart</span>
+                                <div class="qty" id="cartQty">0</div>
+                            </a>
+                        </div>
+
+                        <div class="menu-toggle">
+                            <a href="#"><i class="fa fa-bars"></i><span>Menu</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /row -->
+        </div><!-- /container -->
+    </div><!-- /MAIN HEADER -->
+</header>
+
+<nav id="navigation">
+    <div class="container">
+        <div id="responsive-nav">
+            <ul class="main-nav nav navbar-nav">
+                <li><a href="store.html">Home</a></li>
+                <li class="active"><a href="order-history.html">Order History</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="breadcrumb-header">Order History</h3>
+                <ul class="breadcrumb-tree">
+                    <li><a href="store.html">Home</a></li>
+                    <li class="active">Order History</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="panel-soft">
+                    <div class="section-title">
+                        <h3 class="title">Your order</h3>
+                        <p class="muted" style="margin:0;">Xem lại đơn đã đặt, xem chi tiết và hủy đơn khi chưa được duyệt.</p>
+                    </div>
+
+                    <div id="ordersEmpty" class="empty-state" style="display:none;">
+                        <i class="fa fa-inbox" style="font-size:34px; color:#8d99ae;"></i>
+                        <h4 style="margin-top:10px;">Bạn chưa có đơn hàng nào</h4>
+                        <a class="primary-btn" href="store.html" style="margin-top:10px;">Quay lại mua sắm</a>
+                    </div>
+
+                    <div class="table-responsive" id="ordersWrap" style="display:none;">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th width="90">Mã</th>
+                                <th width="170">Ngày tạo</th>
+                                <th width="160">Trạng thái</th>
+                                <th width="160">Tổng tiền</th>
+                                <th>Giao tới</th>
+                                <th width="220">Thao tác</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ordersTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal chi tiết -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius:10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Chi tiết đơn hàng <span id="mdOrderId"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-bottom:10px;">
+                    <div class="col-md-6">
+                        <p><b>Trạng thái:</b> <span id="mdStatus"></span></p>
+                        <p><b>Ngày tạo:</b> <span id="mdCreatedAt"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><b>Địa chỉ:</b> <span id="mdAddress"></span></p>
+                        <p><b>Thanh toán:</b> <span id="mdPayment"></span></p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th width="140">Đơn giá</th>
+                            <th width="90">SL</th>
+                            <th width="160">Thành tiền</th>
+                        </tr>
+                        </thead>
+                        <tbody id="mdItems"></tbody>
+                    </table>
+                </div>
+
+                <div style="text-align:right;">
+                    <h4>Tổng: <span id="mdTotal" class="order-total">0 ₫</span></h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer id="footer">
+    <div id="bottom-footer" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+          <span class="copyright">
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+          </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/slick.min.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.zoom.min.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+    const ORDER_API = "http://localhost:8083/api/orderhis";
+
+    function formatMoney(v){ return Number(v||0).toLocaleString("vi-VN") + " ₫"; }
+
+    function getCurrentUser(){
+      try { return JSON.parse(localStorage.getItem("currentUser")||"null"); }
+      catch { return null; }
+    }
+
+    function getCart(){
+      try { return JSON.parse(localStorage.getItem("cart")||"[]"); }
+      catch { return []; }
+    }
+
+    function updateCartQty(){
+      const cart = getCart();
+      const totalQty = cart.reduce((s,i)=>s + (i.quantity||0), 0);
+      const el = document.getElementById("cartQty");
+      if(el) el.textContent = totalQty;
+    }
+
+    function badgeClass(status){
+      const s = (status||"").toUpperCase();
+      if(s==="CREATED") return "status-badge st-created";
+      if(s==="PENDING") return "status-badge st-pending";
+      if(s==="APPROVED") return "status-badge st-approved";
+      if(s==="SHIPPING") return "status-badge st-shipping";
+      if(s==="DELIVERED") return "status-badge st-delivered";
+      if(s==="CANCELED") return "status-badge st-canceled";
+      return "status-badge st-pending";
+    }
+
+    function canCancel(status){
+      const s = (status||"").toUpperCase();
+      return s==="CREATED" || s==="PENDING";
+    }
+
+    async function fetchJson(url, opts){
+      const res = await fetch(url, opts);
+      if(!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    async function loadOrders(){
+      const user = getCurrentUser();
+      if(!user?.id){
+        alert("Bạn cần đăng nhập để xem lịch sử đơn hàng!");
+        window.location.href = "Login.html";
+        return;
+      }
+
+      const tbody = document.getElementById("ordersTbody");
+      const wrap = document.getElementById("ordersWrap");
+      const empty = document.getElementById("ordersEmpty");
+
+      try{
+        // ✅ API bạn đang có: GET /api/orders/user/{userId}
+        const orders = await fetchJson(`${ORDER_API}/user/${user.id}`);
+
+        if(!orders || orders.length===0){
+          empty.style.display = "block";
+          wrap.style.display = "none";
+          return;
+        }
+
+        empty.style.display = "none";
+        wrap.style.display = "block";
+        tbody.innerHTML = "";
+
+        orders.forEach(o=>{
+          const tr = document.createElement("tr");
+          const addr = (o.shippingAddress ?? o.shipping_address ?? o.address ?? "").trim() || "<span class='muted'>Chưa có</span>";
+
+          tr.innerHTML = `
+            <td><b>#${o.id}</b></td>
+            <td>${(o.createdAt||"").replace("T"," ").slice(0,19) || "<span class='muted'>-</span>"}</td>
+            <td><span class="${badgeClass(o.status)}">${o.status || "-"}</span></td>
+            <td><b>${formatMoney(o.totalAmount)}</b></td>
+            <td>${addr}</td>
+            <td class="order-actions">
+              <button class="btn btn-default btn-sm" data-action="detail" data-id="${o.id}">
+                <i class="fa fa-eye"></i> Xem
+              </button>
+              ${
+                canCancel(o.status)
+                ? `<button class="btn btn-danger btn-sm" data-action="cancel" data-id="${o.id}">
+                      <i class="fa fa-times"></i> Hủy
+                   </button>`
+                : `<button class="btn btn-danger btn-sm" disabled title="Không thể hủy ở trạng thái này">
+                      <i class="fa fa-times"></i> Hủy
+                   </button>`
+              }
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      }catch(e){
+        console.error(e);
+        alert("Không tải được lịch sử đơn hàng: " + e.message);
+      }
+    }
+
+    async function openOrderDetail(orderId){
+      const user = getCurrentUser();
+      const mdItems = document.getElementById("mdItems");
+      mdItems.innerHTML = "<tr><td colspan='4'>Đang tải...</td></tr>";
+
+      try{
+        // Gợi ý: GET /api/orders/{id}?userId=...
+        const o = await fetchJson(`${ORDER_API}/${orderId}?userId=${user.id}`);
+
+        document.getElementById("mdOrderId").textContent = `#${o.id}`;
+        document.getElementById("mdStatus").innerHTML = `<span class="${badgeClass(o.status)}">${o.status}</span>`;
+        document.getElementById("mdCreatedAt").textContent = (o.createdAt||"").replace("T"," ").slice(0,19) || "-";
+        document.getElementById("mdAddress").textContent = o.shippingAddress ?? o.shipping_address ?? o.address ?? "-";
+        document.getElementById("mdPayment").textContent = o.paymentMethod || "-";
+        document.getElementById("mdTotal").textContent = formatMoney(o.totalAmount);
+
+        mdItems.innerHTML = "";
+        (o.items || []).forEach(it=>{
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${it.productName}</td>
+            <td>${formatMoney(it.price)}</td>
+            <td>${it.quantity}</td>
+            <td><b>${formatMoney(it.lineTotal ?? (Number(it.price)*Number(it.quantity)))}</b></td>
+          `;
+          mdItems.appendChild(tr);
+        });
+
+        $("#orderDetailModal").modal("show");
+      }catch(e){
+        console.error(e);
+        mdItems.innerHTML = "<tr><td colspan='4'>Không tải được chi tiết.</td></tr>";
+        alert("Không tải được chi tiết đơn: " + e.message);
+      }
+    }
+
+    async function cancelOrder(orderId){
+      const user = getCurrentUser();
+      if(!confirm(`Bạn chắc chắn muốn hủy đơn #${orderId} ?`)) return;
+
+      try{
+        // Gợi ý endpoint: PATCH /api/orders/{id}/cancel?userId=...
+        await fetchJson(`${ORDER_API}/${orderId}/cancel?userId=${user.id}`, { method:"PATCH" });
+        alert("Hủy đơn thành công!");
+        loadOrders();
+      }catch(e){
+        console.error(e);
+        alert("Hủy đơn thất bại: " + e.message);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartQty();
+
+      const user = getCurrentUser();
+      const a = document.getElementById("accountLink");
+      if(user && a){
+        a.innerHTML = `<i class="fa fa-user-o"></i> ${user.fullName} (Logout)`;
+        a.href="#";
+        a.onclick = (ev)=>{ ev.preventDefault(); localStorage.removeItem("currentUser"); window.location.href="store.html"; };
+      }
+
+      loadOrders();
+
+      document.getElementById("ordersTbody").addEventListener("click", (e)=>{
+        const btn = e.target.closest("button[data-action]");
+        if(!btn) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+
+        if(action==="detail") openOrderDetail(id);
+        if(action==="cancel") cancelOrder(id);
+      });
+    });
+</script>
+
+</body>
+</html>

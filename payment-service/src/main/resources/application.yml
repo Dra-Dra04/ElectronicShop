@@ -1,0 +1,35 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: payment-service
+
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=PaymentDb;encrypt=false
+    username: sa
+    password: 123
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+order:
+  service:
+    base-url: http://localhost:8083
+frontend:
+  service:
+    url: http://localhost:8080
+momo:
+  partner-code: MOMO
+  redirect-url: http://localhost:8080/payment/momo/return
+  ipn-url : http://localhost:8080/payment/momo/ipn
+  end-point: https://test-payment.momo.vn/v2/gateway/api/create
+  access-key: F8BBA842ECF85
+  secret-key: K951B6PE1waDMi640xX08PD3vg6EkVlz
+  request-type: captureWallet
