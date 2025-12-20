@@ -50,6 +50,7 @@ public class Product {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
+    @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
     // ------------------------------------------------------
 

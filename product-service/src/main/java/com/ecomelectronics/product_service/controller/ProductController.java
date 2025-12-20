@@ -1,14 +1,24 @@
 package com.ecomelectronics.product_service.controller;
 
+import com.ecomelectronics.product_service.dto.ProductDetailDto;
 import com.ecomelectronics.product_service.dto.ProductDto;
+import com.ecomelectronics.product_service.dto.ProductImageDto;
+import com.ecomelectronics.product_service.model.Brand;
 import com.ecomelectronics.product_service.model.Category;
 import com.ecomelectronics.product_service.model.Product;
+import com.ecomelectronics.product_service.model.ProductImage;
+import com.ecomelectronics.product_service.repository.BrandRepository;
 import com.ecomelectronics.product_service.repository.CategoryRepository;
 import com.ecomelectronics.product_service.repository.ProductRepository;
+import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/products")
@@ -17,11 +27,14 @@ public class ProductController {
 
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
+    private final BrandRepository brandRepo;
 
     public ProductController(ProductRepository productRepo,
-                             CategoryRepository categoryRepo) {
+                             CategoryRepository categoryRepo,
+                             BrandRepository brandRepo) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
+        this.brandRepo = brandRepo;
     }
 
     private ProductDto toDto(Product p) {
@@ -66,8 +79,13 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/brands")
-    public List<String> getBrands() {
-        return productRepo.findDistinctBrands();
+    public List<String> getAllBrandNames() {
+        return brandRepo.findAll()
+                .stream()
+                .map(Brand::getName)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
     }
 
     @PostMapping
@@ -111,4 +129,29 @@ public class ProductController {
         productRepo.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/api/products/{id}")
+    public ResponseEntity<ProductDetailDto> getDetail(@PathVariable Long id) {
+        Product p = productRepo.findByIdWithImages(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        List<ProductImageDto> imgs = p.getImages().stream()
+                .sorted(Comparator.comparing(ProductImage::getSortOrder))
+                .map(i -> new ProductImageDto(i.getId(), i.getImageUrl(), i.getIsMain(), i.getSortOrder()))
+                .toList();
+
+        ProductDetailDto dto = new ProductDetailDto(
+                p.getId(),
+                p.getName(),
+                p.getDescription(),
+                p.getPrice(), // tuỳ kiểu price của bạn
+                p.getCategory() != null ? p.getCategory().getId() : null,
+                p.getCategory() != null ? p.getCategory().getName() : null,
+                p.getBrand(),
+                p.getStock(),
+                imgs
+        );
+
+        return ResponseEntity.ok(dto);
+    }
+
 }

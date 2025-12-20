@@ -1,5 +1,5 @@
 server:
-  port: 8082   # product-service đang 8081, để customer-service 8082 cho dễ phân biệt
+  port: 8082
 
 spring:
   datasource:

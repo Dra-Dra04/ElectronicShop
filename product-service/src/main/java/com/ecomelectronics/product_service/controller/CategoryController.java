@@ -1,5 +1,6 @@
 package com.ecomelectronics.product_service.controller;
 
+import com.ecomelectronics.product_service.dto.CategoryDto;
 import com.ecomelectronics.product_service.model.Category;
 import com.ecomelectronics.product_service.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,23 @@ public class CategoryController {
         this.repo = repo;
     }
 
+    private CategoryDto toDto(Category c) {
+        CategoryDto dto = new CategoryDto();
+        dto.setId(c.getId());
+        dto.setName(c.getName());
+        dto.setDescription(c.getDescription());
+        return dto;
+    }
+
     @GetMapping
-    public List<Category> getAll() {
-        return repo.findAll();
+    public List<CategoryDto> getAll() {
+        return repo.findAll().stream().map(this::toDto).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getById(@PathVariable Long id) {
+    public ResponseEntity<CategoryDto> getById(@PathVariable Long id) {
         return repo.findById(id)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(toDto(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
