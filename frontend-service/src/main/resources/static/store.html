@@ -112,18 +112,20 @@
 
 
 								<!-- Cart -->
-								<div class="dropdown">
-									<a href="cart.html" class="cart-link">
-										<i class="fa fa-shopping-cart"></i>
-										<span>Your Cart</span>
-										<div class="qty">3</div>
-									</a>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="cursor:pointer">
+                                        <i class="fa fa-shopping-cart"></i>
+                                        <span>Your Cart</span>
+                                        <div class="qty">0</div> </a>
+
                                     <div class="cart-dropdown">
-                                        <div class="cart-list"></div>
+
+                                        <div class="cart-list">
+                                        </div>
 
                                         <div class="cart-summary">
-                                            <small><span id="cart-items-count">0</span> Item(s) selected</small>
-                                            <h5>SUBTOTAL: <span id="cart-subtotal-mini">0 ₫</span></h5>
+                                            <small>0 Item(s) selected</small>
+                                            <h5>SUBTOTAL: 0 ₫</h5>
                                         </div>
 
                                         <div class="cart-btns">
@@ -131,7 +133,7 @@
                                             <a href="checkout.html">Checkout <i class="fa fa-arrow-circle-right"></i></a>
                                         </div>
                                     </div>
-								</div>
+                                </div>
 								<!-- /Cart -->
 
 								<!-- Menu Toogle -->
@@ -424,28 +426,12 @@
 
         <!-- jQuery Plugins -->
         <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/slick.min.js"></script>
         <script src="js/nouislider.min.js"></script>
         <script src="js/jquery.zoom.min.js"></script>
         <script src="js/main.js"></script>
 
-        <!-- Script gọi API -->
-        <script src="js/auth.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const user = getCurrentUser();
-                const accountLink = document.querySelector(".header-links .fa-user-o")?.parentElement;
-
-                if (user && accountLink) {
-                    accountLink.innerHTML = `<i class="fa fa-user-o"></i> ${user.fullName} (Logout)`;
-                    accountLink.href = "#";
-                    accountLink.onclick = function (e) {
-                        e.preventDefault();
-                        logout();
-                    };
-                }
-            });
-        </script>
         <script>
             const API_BASE = "http://localhost:8081";
 
@@ -453,66 +439,149 @@
             let selectedCategoryId = null;
             let selectedBrand = null;
 
-            // Hiển thị tên user ở top
-        document.addEventListener("DOMContentLoaded", function () {
-        const span = document.getElementById("welcomeUser");
-        const userJson = localStorage.getItem("currentUser");
-        if (userJson) {
-            const user = JSON.parse(userJson);
-            span.textContent = "Xin chào, " + user.fullName;
-        } else {
-            span.textContent = "Bạn chưa đăng nhập";
-        }
-        });
+            /* ================= 1. QUẢN LÝ GIỎ HÀNG & MINI CART ================= */
+
+            function getCart() {
+                return JSON.parse(localStorage.getItem("cart") || "[]");
+            }
+
+            function saveCart(cart) {
+                localStorage.setItem("cart", JSON.stringify(cart));
+                updateCartUI(); // Lưu xong vẽ lại giao diện ngay
+            }
+
+            function formatPriceVND(value) {
+                if (value == null) return "0 ₫";
+                const n = Number(value);
+                if (isNaN(n)) return "0 ₫";
+                return new Intl.NumberFormat("vi-VN").format(n) + " ₫";
+            }
+
+            // Hàm thêm vào giỏ hàng (gọi khi bấm nút)
+            function addToCart(product) {
+                let cart = getCart();
+
+                if (!product.productId) {
+                    alert("Lỗi sản phẩm thiếu ID!");
+                    return;
+                }
+
+                const idx = cart.findIndex(x => x.productId === product.productId);
+                if (idx >= 0) {
+                    cart[idx].quantity += 1;
+                } else {
+                    cart.push({ ...product, quantity: 1 });
+                }
+
+                saveCart(cart);
+
+                // Mở mini cart ra để user thấy (UX)
+                // $('.dropdown-toggle').dropdown('toggle');
+                alert("Đã thêm vào giỏ hàng!");
+            }
+
+            // Hàm xóa khỏi giỏ hàng (gọi từ Mini Cart)
+            function removeFromCart(index) {
+                let cart = getCart();
+                cart.splice(index, 1);
+                saveCart(cart);
+            }
+
+            // Hàm vẽ lại giao diện Mini Cart (Header)
+            function updateCartUI() {
+                const cart = getCart();
+
+                // 1. Tính toán
+                let totalQty = 0;
+                let subTotal = 0;
+                cart.forEach(item => {
+                    const q = item.quantity || 1;
+                    totalQty += q;
+                    subTotal += (item.price * q);
+                });
+
+                // 2. Cập nhật Badge số lượng (màu đỏ)
+                const qtyEls = document.querySelectorAll(".dropdown .qty");
+                qtyEls.forEach(el => el.textContent = totalQty);
+
+                // 3. Render danh sách sản phẩm trong dropdown
+                const cartListEl = document.querySelector(".cart-list");
+                const cartSummaryEl = document.querySelector(".cart-summary");
+
+                if (cartListEl) {
+                    if (cart.length === 0) {
+                        cartListEl.innerHTML = '<div style="padding:15px; text-align:center;">Giỏ hàng trống</div>';
+                    } else {
+                        cartListEl.innerHTML = "";
+                        cart.forEach((item, index) => {
+                            const img = item.imageUrl || 'img/product01.png';
+                            const html = `
+                                <div class="product-widget">
+                                    <div class="product-img">
+                                        <img src="${img}" alt="${item.name}">
+                                    </div>
+                                    <div class="product-body">
+                                        <h3 class="product-name"><a href="product.html?id=${item.productId}">${item.name}</a></h3>
+                                        <h4 class="product-price">
+                                            <span class="qty">${item.quantity}x</span>
+                                            ${formatPriceVND(item.price)}
+                                        </h4>
+                                    </div>
+                                    <button class="delete" onclick="removeFromCart(${index})"><i class="fa fa-close"></i></button>
+                                </div>
+                            `;
+                            cartListEl.innerHTML += html;
+                        });
+                    }
+                }
+
+                // 4. Cập nhật Tổng tiền (Subtotal)
+                if (cartSummaryEl) {
+                    const smallEl = cartSummaryEl.querySelector("small");
+                    const h5El = cartSummaryEl.querySelector("h5");
+
+                    if(smallEl) smallEl.textContent = `${totalQty} Item(s) selected`;
+                    if(h5El) h5El.textContent = `SUBTOTAL: ${formatPriceVND(subTotal)}`;
+                }
+            }
+
+
+            /* ================= 2. API & RENDER SẢN PHẨM ================= */
 
             async function fetchJson(url) {
                 const res = await fetch(url);
-                if (!res.ok) {
-                    throw new Error("Request failed: " + res.status);
-                }
+                if (!res.ok) throw new Error("Request failed: " + res.status);
                 return res.json();
             }
 
-            // Format giá kiểu Việt Nam: xx.xxx.xxx VNĐ
-
-            function formatPriceVND(value) {
-            if (value == null) return "0 VNĐ";
-            const number = typeof value === "number" ? value : parseFloat(value);
-            if (isNaN(number)) return "0 VNĐ";
-            return new Intl.NumberFormat("vi-VN").format(number) + " VNĐ";
-            }
-
+            // Render danh sách sản phẩm
             function renderProducts(products) {
                 const container = document.getElementById("product-list");
                 if (!container) return;
 
                 let html = "";
                 products.forEach(p => {
-                    const imgSrc = (p.imageUrl && p.imageUrl.trim() !== "")
-                        ? p.imageUrl
-                        : "img/product01.png";
+                    const imgSrc = (p.imageUrl && p.imageUrl.trim() !== "") ? p.imageUrl : "img/product01.png";
+
+                    // Xử lý tên để tránh lỗi HTML khi truyền vào onclick
+                    const safeName = (p.name || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
 
                     html += `
                     <div class="col-md-4 col-xs-6">
-                      <div class="product" style="cursor:pointer"
-                           onclick="goToProduct(${p.id})">
-
-                        <div class="product-img">
-                          <img src="${imgSrc}" alt="${p.name}">
+                      <div class="product">
+                        <div class="product-img" style="cursor:pointer;" onclick="goToProduct(${p.id})">
+                          <img src="${imgSrc}" alt="${p.name}" style="height:200px; object-fit:contain; width:100%;">
                         </div>
 
                         <div class="product-body">
                           <p class="product-category">${p.categoryName || ""}</p>
-                          <h3 class="product-name">${p.name}</h3>
+                          <h3 class="product-name"><a href="product.html?id=${p.id}">${p.name}</a></h3>
                           <h4 class="product-price">${formatPriceVND(p.price)}</h4>
                         </div>
 
                         <div class="add-to-cart">
                           <button class="add-to-cart-btn"
-                            data-id="${p.id}"
-                            data-name="${p.name}"
-                            data-price="${p.price}"
-                            data-image="${imgSrc}">
+                                onclick="handleClickAdd('${p.id}', '${safeName}', ${p.price}, '${imgSrc}')">
                             <i class="fa fa-shopping-cart"></i> add to cart
                           </button>
                         </div>
@@ -524,176 +593,132 @@
                 container.innerHTML = html;
             }
 
-            function goToProduct(id) {
-              window.location.href = `product.html?id=${id}`;
+            // Hàm trung gian xử lý sự kiện click thêm giỏ hàng
+            function handleClickAdd(id, name, price, img) {
+                addToCart({
+                    productId: Number(id),
+                    name: name,
+                    price: Number(price),
+                    imageUrl: img
+                });
             }
+
+            function goToProduct(id) {
+                window.location.href = `product.html?id=${id}`;
+            }
+
+            /* ================= 3. LOAD DỮ LIỆU TỪ API ================= */
 
             async function loadProducts() {
-              const params = new URLSearchParams();
+                const params = new URLSearchParams();
+                if (selectedBrand) params.append("brand", selectedBrand);
+                if (selectedCategoryId) params.append("categoryId", selectedCategoryId);
+                if (currentKeyword) params.append("keyword", currentKeyword);
 
-              // ✅ dùng state đã chọn từ UL
-              if (selectedBrand) params.append("brand", selectedBrand);
-              if (selectedCategoryId) params.append("categoryId", selectedCategoryId);
-              if (currentKeyword) params.append("keyword", currentKeyword);
+                const url = `${API_BASE}/api/products` + (params.toString() ? `?${params.toString()}` : "");
 
-              const url = `${API_BASE}/api/products` + (params.toString() ? `?${params.toString()}` : "");
-
-              try {
-                const data = await fetchJson(url);
-                renderProducts(data);
-              } catch (e) {
-                console.error(e);
-                alert("Lỗi khi tải sản phẩm");
-              }
+                try {
+                    const data = await fetchJson(url);
+                    renderProducts(data);
+                } catch (e) {
+                    console.error(e);
+                    // alert("Lỗi khi tải sản phẩm"); // Có thể comment lại để đỡ phiền
+                }
             }
-            // Render Categories
 
             async function loadCategories() {
-                    const ul = document.getElementById("categoryList");
-                    if (!ul) return;
+                const ul = document.getElementById("categoryList");
+                if (!ul) return;
 
+                try {
                     const categories = await fetchJson(`${API_BASE}/api/categories`);
-
-                    // All
                     ul.innerHTML = `<li><a class="active" data-id="">All</a></li>` +
-                      categories.map(c => `
-                        <li>
-                          <a data-id="${c.id}">${c.name}</a>
-                        </li>
-                      `).join("");
+                        categories.map(c => `<li><a data-id="${c.id}">${c.name}</a></li>`).join("");
 
                     ul.addEventListener("click", (e) => {
-                      const a = e.target.closest("a[data-id]");
-                      if (!a) return;
+                        const a = e.target.closest("a[data-id]");
+                        if (!a) return;
 
-                      // active UI
-                      ul.querySelectorAll("a").forEach(x => x.classList.remove("active"));
-                      a.classList.add("active");
+                        ul.querySelectorAll("a").forEach(x => x.classList.remove("active"));
+                        a.classList.add("active");
 
-                      const id = a.dataset.id;
-                      selectedCategoryId = id ? Number(id) : null;
-
-                      loadProducts(); // lọc lại
+                        const id = a.dataset.id;
+                        selectedCategoryId = id ? Number(id) : null;
+                        loadProducts();
                     });
-                  }
-
-
-            // Render Brands
+                } catch (e) { console.error("Load category error", e); }
+            }
 
             async function loadBrands() {
-              const ul = document.getElementById("brandList");
-              if (!ul) return;
+                const ul = document.getElementById("brandList");
+                if (!ul) return;
 
-              // ✅ gọi đúng brand-service
-              const brands = await fetchJson(`${API_BASE}/api/brands`);
-              // brands dạng: [{id:1,name:"Asus"}, ...]
+                try {
+                    const brands = await fetchJson(`${API_BASE}/api/brands`);
+                    ul.innerHTML = `<li><a class="active" data-brand="">All</a></li>` +
+                        brands.map(b => `<li><a data-brand="${b.name}">${b.name}</a></li>`).join("");
 
-              ul.innerHTML =
-                `<li><a class="active" data-brand="">All</a></li>` +
-                brands.map(b => `
-                  <li>
-                    <a data-brand="${b.name}">${b.name}</a>
-                  </li>
-                `).join("");
+                    ul.addEventListener("click", (e) => {
+                        const a = e.target.closest("a[data-brand]");
+                        if (!a) return;
 
-              ul.addEventListener("click", (e) => {
-                const a = e.target.closest("a[data-brand]");
-                if (!a) return;
+                        ul.querySelectorAll("a").forEach(x => x.classList.remove("active"));
+                        a.classList.add("active");
 
-                ul.querySelectorAll("a").forEach(x => x.classList.remove("active"));
-                a.classList.add("active");
-
-                selectedBrand = a.dataset.brand || null;
-                loadProducts();
-              });
+                        selectedBrand = a.dataset.brand || null;
+                        loadProducts();
+                    });
+                } catch (e) { console.error("Load brand error", e); }
             }
+
+
+            /* ================= 4. KHỞI TẠO (ON READY) ================= */
 
             document.addEventListener("DOMContentLoaded", async () => {
-              await loadCategories();
-              await loadBrands();
-              await loadProducts();
-            });
-            document.addEventListener("DOMContentLoaded", () => {
-              const searchForm = document.querySelector(".header-search form");
-              const searchInput = document.querySelector(".header-search input.input");
+                // 1. Hiển thị User (Auth)
+                const span = document.getElementById("welcomeUser");
+                const userJson = localStorage.getItem("currentUser");
+                const accountLink = document.querySelector(".header-links .fa-user-o")?.parentElement;
 
-              if (!searchForm || !searchInput) return;
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    if(span) span.textContent = "Xin chào, " + user.fullName;
 
-              searchForm.addEventListener("submit", (e) => {
-                e.preventDefault();
+                    // Xử lý link Logout
+                    if (accountLink) {
+                        accountLink.innerHTML = `<i class="fa fa-user-o"></i> ${user.fullName} (Logout)`;
+                        accountLink.href = "#";
+                        accountLink.onclick = function (e) {
+                            e.preventDefault();
+                            localStorage.removeItem("currentUser");
+                            window.location.href = "Login.html";
+                        };
+                    }
+                } else {
+                    if(span) span.textContent = "Bạn chưa đăng nhập";
+                }
 
-                const kw = searchInput.value.trim();
-                currentKeyword = kw !== "" ? kw : null;
+                // 2. Load Mini Cart
+                updateCartUI();
 
-                loadProducts();
-              });
-            });
-        </script>
+                // 3. Load Data
+                await loadCategories();
+                await loadBrands();
+                await loadProducts();
 
-        <script>
-            function getCart() {
-              return JSON.parse(localStorage.getItem("cart") || "[]");
-            }
-
-            function saveCart(cart) {
-              localStorage.setItem("cart", JSON.stringify(cart));
-            }
-
-            function updateCartQty() {
-              const cart = getCart();
-              const totalQty = cart.reduce((s, i) => s + (i.quantity || 0), 0);
-
-
-              const qtyEl = document.querySelector(".dropdown .fa-shopping-cart")
-                ?.closest("a")
-                ?.querySelector(".qty");
-
-              if (qtyEl) qtyEl.textContent = totalQty;
-            }
-
-            function addToCart(product) {
-              let cart = getCart();
-                if (!Number.isInteger(product.productId) || product.productId <= 0) {
-                console.error("Invalid productId when addToCart:", product);
-                alert("Sản phẩm lỗi (thiếu productId). Kiểm tra data-id ở nút Add to cart!");
-                return;
-              }
-              const idx = cart.findIndex(x => x.productId === product.productId);
-
-              if (idx >= 0) cart[idx].quantity += 1;
-              else cart.push({ ...product, quantity: 1 });
-
-              saveCart(cart);
-              updateCartQty();
-
-              // window.location.href = "cart.html";
-              alert("Đã thêm vào giỏ hàng!");
-            }
-
-            // Bắt sự kiện click cho tất cả nút add-to-cart (kể cả render sau)
-            document.addEventListener("click", (e) => {
-              const btn = e.target.closest(".add-to-cart-btn");
-              if (!btn) return;
-
-              // ✅ FIX: ép kiểu an toàn + log khi thiếu data-id
-              const idRaw = btn.dataset.id;
-              const pid = Number(idRaw);
-
-              if (!idRaw || !Number.isFinite(pid)) {
-                console.error("Missing/invalid data-id on button:", btn, btn.dataset);
-                alert("Nút Add to cart thiếu data-id. Kiểm tra HTML render sản phẩm!");
-                return;
-              }
-
-              addToCart({
-                productId: pid,
-                name: btn.dataset.name || "",
-                price: Number(btn.dataset.price || 0),
-                imageUrl: btn.dataset.image || ""
-              });
+                // 4. Xử lý Search
+                const searchForm = document.querySelector(".header-search form");
+                const searchInput = document.querySelector(".header-search input.input");
+                if (searchForm && searchInput) {
+                    searchForm.addEventListener("submit", (e) => {
+                        e.preventDefault();
+                        const kw = searchInput.value.trim();
+                        currentKeyword = kw !== "" ? kw : null;
+                        loadProducts();
+                    });
+                }
             });
 
-            document.addEventListener("DOMContentLoaded", updateCartQty);
         </script>
 
     </body>

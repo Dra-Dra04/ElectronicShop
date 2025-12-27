@@ -1,5 +1,7 @@
 package com.ecomelectronics.adminservice.controller;
 
+import com.ecomelectronics.adminservice.dto.CreateUserRequest;
+import com.ecomelectronics.adminservice.dto.UpdateUserRoleRequest;
 import com.ecomelectronics.adminservice.dto.UserDto;
 import com.ecomelectronics.adminservice.service.AdminUserService;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,16 @@ public class AdminUserController {
     // GET /api/admin/users  hoặc /api/admin/users?role=ADMIN
     @GetMapping
     public List<UserDto> getAll(@RequestParam(required = false) String role) {
-        return adminUserService.getAllUsers(role);
+        return adminUserService.getAllUsers();
+    }
+    @PostMapping
+    public UserDto create(@RequestBody CreateUserRequest req) {
+        return adminUserService.createUser(req);
+    }
+
+    @PutMapping("/{id}/role")
+    public UserDto updateRole(@PathVariable Long id, @RequestBody UpdateUserRoleRequest req) {
+        return adminUserService.updateRole(id, req);
     }
 
     // GET /api/admin/users/{id}

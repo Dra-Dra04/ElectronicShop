@@ -115,7 +115,7 @@
                 <!-- LOGO -->
                 <div class="col-md-3">
                     <div class="header-logo">
-                        <a href="#" class="logo">
+                        <a href="store.html" class="logo">
                             <h2 style="color: #FFF; margin-top: 10px;">ELECTRO<span style="color: #D10024;">.</span></h2>
                         </a>
                     </div>
@@ -377,6 +377,9 @@
                     <!-- TAB: USERS -->
                     <div id="users" class="tab-pane fade">
                         <h3 class="section-title">User Management</h3>
+                        <button class="btn-red" data-toggle="modal" data-target="#addUserModal">
+                            <i class="fa fa-plus"></i> Add User
+                        </button>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -386,8 +389,7 @@
                                     <th>Email</th>
                                     <th>Role</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
+                                    <th style="width: 180px;">Change Role</th> <th>Actions</th> </tr>
                                 </thead>
                                 <!-- ADDED: tbody với id để sau này load Users bằng API -->
                                 <tbody id="user-table-body">
@@ -565,6 +567,47 @@
         </div>
     </div>
 </div>
+
+=== MODAL ADD USER ===
+<div id="addUserModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add New User</h4>
+            </div>
+            <div class="modal-body">
+                <form id="add-user-form">
+                    <div class="admin-form-group">
+                        <label>Full Name</label>
+                        <input id="user-fullname" class="input" type="text" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Email</label>
+                        <input id="user-email" class="input" type="email" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Password</label>
+                        <input id="user-password" class="input" type="password" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Role</label>
+                        <select id="user-role" class="input">
+                            <option value="CUSTOMER">CUSTOMER</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="SALER">SALER</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">Close</button>
+                <button class="btn btn-red" id="btn-save-user">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- FOOTER -->
 <footer id="footer">
@@ -1099,88 +1142,103 @@
         });
     }
     // ========== USERS ==========
-    function loadUsers(role) {
-        let url = ADMIN_API_BASE + '/users';
-        if (role) {
-            url += '?role=' + role;
-        }
-
-        $.get(url)
-            .done(function (users) {
-                const $tbody = $('#user-table-body');
-                $tbody.empty();
-
-                if (!users || users.length === 0) {
-                    $tbody.append(
-                        '<tr><td colspan="6" class="text-center">No users found</td></tr>'
-                    );
-                    return;
-                }
-
-                users.forEach(function (u) {
-                    const statusLabel = u.active
-                        ? '<span class="label label-success">Active</span>'
-                        : '<span class="label label-default">Inactive</span>';
-
-                    const rowHtml = `
-                        <tr>
-                            <td>#${u.id}</td>
-                            <td>${u.fullName || ''}</td>
-                            <td>${u.email || ''}</td>
-                            <td>${u.role || ''}</td>
-                            <td>${statusLabel}</td>
-                            <td>
-                                <button class="btn btn-sm btn-default" onclick="viewUser(${u.id})">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $tbody.append(rowHtml);
-                });
-            })
-            .fail(function () {
-                console.error('Failed to load users');
-                alert('Không tải được danh sách user. Kiểm tra lại admin-service / customer-service.');
-            });
+    function loadUsers(roleFilter) {
+    let url = ADMIN_API_BASE + '/users';
+    if (roleFilter) {
+        url += '?role=' + roleFilter;
     }
 
-    function deleteUser(id) {
-        if (!confirm('Bạn có chắc muốn xoá user #' + id + ' ?')) {
-            return;
-        }
+    $.get(url)
+        .done(function (users) {
+            const $tbody = $('#user-table-body');
+            $tbody.empty();
 
-        $.ajax({
-            url: ADMIN_API_BASE + '/users/' + id,
-            method: 'DELETE',
-            success: function () {
-                loadUsers();
-            },
-            error: function () {
-                alert('Xoá user thất bại. Kiểm tra lại backend.');
+            if (!users || users.length === 0) {
+                $tbody.append('<tr><td colspan="7" class="text-center">No users found</td></tr>');
+                return;
             }
+
+            users.forEach(function (u) {
+                // Label trạng thái Active/Inactive
+                const statusLabel = u.active
+                    ? '<span class="label label-success">Active</span>'
+                    : '<span class="label label-default">Inactive</span>';
+
+                // --- PHẦN THAY ĐỔI: TẠO DROPDOWN CHỌN ROLE ---
+                // Kiểm tra role hiện tại để set thuộc tính "selected"
+                const isCustomer = u.role === 'CUSTOMER' ? 'selected' : '';
+                const isAdmin = u.role === 'ADMIN' ? 'selected' : '';
+                const isSaler = u.role === 'SALER' ? 'selected' : '';
+
+                // Tạo HTML cho Dropdown và nút Lưu
+                // ID của select sẽ là "role-select-{userId}" để tí nữa lấy giá trị
+                const roleSelector = `
+                    <div style="display:flex; align-items:center;">
+                        <select id="role-select-${u.id}" class="form-control input-sm" style="width:110px; margin-right:5px;">
+                            <option value="CUSTOMER" ${isCustomer}>CUSTOMER</option>
+                            <option value="SALER" ${isSaler}>SALER</option>
+                            <option value="ADMIN" ${isAdmin}>ADMIN</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" title="Lưu quyền mới" onclick="saveUserRole(${u.id})">
+                            <i class="fa fa-save"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Render hàng
+                const rowHtml = `
+                    <tr>
+                        <td>#${u.id}</td>
+                        <td>${u.fullName || ''}</td>
+                        <td>${u.email || ''}</td>
+                        <td><span class="label label-info">${u.role}</span></td>
+                        <td>${statusLabel}</td>
+                        <td>
+                            ${roleSelector}
+                        </td>
+                        <td>
+                             <button class="btn btn-sm btn-default" onclick="viewUser(${u.id})"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(rowHtml);
+            });
+        })
+        .fail(function (xhr) {
+            console.error('Failed to load users', xhr);
+            alert('Lỗi tải danh sách user.');
         });
     }
 
-    function viewUser(id) {
-        $.get(ADMIN_API_BASE + '/users/' + id)
-            .done(function (u) {
-                alert(
-                    'User #' + u.id +
-                    '\nTên: ' + (u.fullName || '') +
-                    '\nEmail: ' + (u.email || '') +
-                    '\nPhone: ' + (u.phone || '') +
-                    '\nĐịa chỉ: ' + (u.address || '') +
-                    '\nRole: ' + (u.role || '') +
-                    '\nActive: ' + (u.active ? 'Yes' : 'No')
-                );
-            })
-            .fail(function () {
-                alert('Không load được chi tiết user');
-            });
+    function saveUserRole(id) {
+        // 1. Lấy giá trị từ dropdown tương ứng với ID user
+        const newRole = $('#role-select-' + id).val();
+
+        if (!confirm('Bạn có chắc muốn đổi quyền User #' + id + ' thành ' + newRole + '?')) {
+            return;
+        }
+
+        // 2. Gọi API cập nhật
+        // Lưu ý: Đảm bảo Backend UpdateUserRoleRequest nhận field tên là "role"
+        const requestBody = {
+            role: newRole
+        };
+
+        $.ajax({
+            url: ADMIN_API_BASE + '/users/' + id + '/role',
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(requestBody),
+            success: function () {
+                alert('Cập nhật quyền thành công!');
+                loadUsers(); // Load lại bảng để cập nhật giao diện
+            },
+            error: function (xhr) {
+                console.error(xhr);
+                alert('Cập nhật thất bại: ' + (xhr.responseText || 'Lỗi hệ thống'));
+            }
+        });
     }
 
      /* ========== ORDERS ========== */
@@ -1372,6 +1430,37 @@
     });
 
     $('#btn-refresh-orders').on('click', loadOrders);
+
+    // === ADD USER ===
+    $('#btn-save-user').on('click', function () {
+  const payload = {
+    fullName: $('#user-fullname').val().trim(),
+    email: $('#user-email').val().trim(),
+    password: $('#user-password').val(),
+    role: $('#user-role').val()
+  };
+
+  if (!payload.fullName || !payload.email || !payload.password) {
+    alert('Nhập đủ FullName, Email, Password');
+    return;
+  }
+
+  $.ajax({
+    url: ADMIN_API_BASE + '/users',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function () {
+      $('#addUserModal').modal('hide');
+      $('#add-user-form')[0].reset();
+      loadUsers();
+    },
+    error: function (xhr) {
+      console.error(xhr);
+      alert('Tạo user thất bại (trùng email? customer-service security?)');
+    }
+  });
+});
 
 
 
