@@ -28,7 +28,6 @@ public class Payment {
     private PaymentStatus status;
 
     private BigDecimal amount;
-    private String momoPaymentCode; // Mã thanh toán MoMo (format: MOMO-XXXX-XXXX)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

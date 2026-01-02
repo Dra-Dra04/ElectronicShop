@@ -21,15 +21,18 @@ public class OrderService {
     private final OrderItemRepository itemRepo;
     private final RestTemplate restTemplate;
     private final String productServiceUrl;
+    private final String paymentServiceUrl;
 
     public OrderService(OrderRepository orderRepo,
                        OrderItemRepository itemRepo,
                         RestTemplate restTemplate,
-                        @Value("${product.service.url}") String productServiceUrl){
+                        @Value("${product.service.url}") String productServiceUrl,
+                        @Value("${payment.service.url}") String paymentServiceUrl){
         this.orderRepo = orderRepo;
         this.itemRepo = itemRepo;
         this.restTemplate = restTemplate;
         this.productServiceUrl = productServiceUrl;
+        this.paymentServiceUrl = paymentServiceUrl;
     }
     public List<Order> getOrdersByUser(Long userId) {
         return orderRepo.findByUserIdOrderByCreatedAtDesc(userId);
@@ -75,9 +78,53 @@ public class OrderService {
         }
 
         order.setTotalAmount(total);
-        return orderRepo.save(order);
+        order = orderRepo.save(order);
 
+        // Nếu là thanh toán trực tuyến, gọi Payment Service để tạo payment
+        if (!"COD".equalsIgnoreCase(req.getPaymentMethod())) {
+            try {
+                CreatePaymentRequest paymentRequest = new CreatePaymentRequest();
+                paymentRequest.setOrderId(order.getId());
+                paymentRequest.setMethod(req.getPaymentMethod());
+                paymentRequest.setAmount(total);
+                
+                // Gọi Payment Service để tạo payment
+                CreatePaymentResponse paymentResponse = restTemplate.postForObject(
+                    paymentServiceUrl + "/api/payments/create",
+                    paymentRequest,
+                    CreatePaymentResponse.class
+                );
+                
+                // Payment đã được tạo thành công
+                // paymentResponse chứa paymentId và paymentUrl nếu cần
+            } catch (Exception e) {
+                // Log error nhưng không fail order creation
+                System.err.println("Failed to create payment: " + e.getMessage());
+            }
+        }
 
+        return order;
+    }
+    
+    // Method để lấy payment URL cho order
+    public CreatePaymentResponse getPaymentUrl(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        if ("COD".equalsIgnoreCase(order.getPaymentMethod())) {
+            throw new RuntimeException("Order is COD, no payment URL needed");
+        }
+        
+        CreatePaymentRequest paymentRequest = new CreatePaymentRequest();
+        paymentRequest.setOrderId(orderId);
+        paymentRequest.setMethod(order.getPaymentMethod());
+        paymentRequest.setAmount(order.getTotalAmount());
+        
+        return restTemplate.postForObject(
+            paymentServiceUrl + "/api/payments/create",
+            paymentRequest,
+            CreatePaymentResponse.class
+        );
     }
 
 
