@@ -1,4 +1,4 @@
-package com.ecomelectronics.adminservice.dto;
+package com.ecomelectronics.product_service.dto;
 
 public class CategoryDto {
     private Long id;
@@ -14,3 +14,4 @@ public class CategoryDto {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 }
+

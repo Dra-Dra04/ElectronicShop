@@ -39,7 +39,7 @@ public class UserAccount {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private UserRole role;      // CUSTOMER hoặc ADMIN
+    private UserRole role;
 
     @Column(nullable = false)
     private Boolean active;

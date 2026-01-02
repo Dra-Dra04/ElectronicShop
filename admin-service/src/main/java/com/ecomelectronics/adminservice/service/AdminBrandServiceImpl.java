@@ -26,7 +26,6 @@ public class AdminBrandServiceImpl implements AdminBrandService {
 
     @Override
     public List<BrandDto> getAllBrands() {
-        // chỉnh path này cho đúng với BrandController bên product-service
         String url = productBaseUrl + "/api/brands";
         ResponseEntity<BrandDto[]> response =
                 restTemplate.getForEntity(url, BrandDto[].class);

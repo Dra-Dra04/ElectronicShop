@@ -47,8 +47,9 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
-						<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+                        <li><a href="admin.html"><i></i> Admin</a></li>
+                        <li><a href="Login.html"><i class="fa fa-user-o"></i> My Account</a></li>
+                        <span id="welcomeUser"></span>
 					</ul>
 				</div>
 			</div>
@@ -63,7 +64,7 @@
 						<!-- LOGO -->
 						<div class="col-md-3">
 							<div class="header-logo">
-								<a href="#" class="logo">
+								<a href="store.html" class="logo">
 									<img src="./img/logo.png" alt="">
 								</a>
 							</div>
@@ -216,116 +217,77 @@
 				<div class="row">
 					<!-- Product main img -->
 					<div class="col-md-5 col-md-push-2">
-						<div id="product-main-img">
-							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
-						</div>
+						<div id="product-main-img"></div>
 					</div>
 					<!-- /Product main img -->
 
 					<!-- Product thumb imgs -->
 					<div class="col-md-2  col-md-pull-5">
-						<div id="product-imgs">
-							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
-						</div>
+						<div id="product-imgs"></div>
 					</div>
 					<!-- /Product thumb imgs -->
 
 					<!-- Product details -->
-					<div class="col-md-5">
-						<div class="product-details">
-							<h2 class="product-name">product name goes here</h2>
-							<div>
-								<div class="product-rating">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<a class="review-link" href="#">10 Review(s) | Add your review</a>
-							</div>
-							<div>
-								<h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-								<span class="product-available">In Stock</span>
-							</div>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <div class="col-md-5">
+                        <div class="product-details">
+                            <h2 class="product-name" id="pd-name">Loading...</h2>
 
-							<div class="product-options">
-								<label>
-									Size
-									<select class="input-select">
-										<option value="0">X</option>
-									</select>
-								</label>
-								<label>
-									Color
-									<select class="input-select">
-										<option value="0">Red</option>
-									</select>
-								</label>
-							</div>
+                            <div>
+                                <h3 class="product-price" id="pd-price"></h3>
+                                <span class="product-available" id="pd-stock">In Stock</span>
+                            </div>
 
-							<div class="add-to-cart">
-								<div class="qty-label">
-									Qty
-									<div class="input-number">
-										<input type="number">
-										<span class="qty-up">+</span>
-										<span class="qty-down">-</span>
-									</div>
-								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-							</div>
+                            <p id="pd-desc"></p>
 
-							<ul class="product-btns">
-								<li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-								<li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-							</ul>
+                            <ul class="product-links">
+                                <li>Category:</li>
+                                <li><a href="#" id="pd-category"></a></li>
+                            </ul>
 
-							<ul class="product-links">
-								<li>Category:</li>
-								<li><a href="#">Headphones</a></li>
-								<li><a href="#">Accessories</a></li>
-							</ul>
+                            <div class="product-options">
+                                <label>
+                                    Size
+                                    <select class="input-select">
+                                        <option value="0">X</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Color
+                                    <select class="input-select">
+                                        <option value="0">Red</option>
+                                    </select>
+                                </label>
+                            </div>
 
-							<ul class="product-links">
-								<li>Share:</li>
-								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-								<li><a href="#"><i class="fa fa-envelope"></i></a></li>
-							</ul>
+                            <div class="add-to-cart">
+                                <div class="qty-label">
+                                    Qty
+                                    <div class="input-number">
+                                        <input type="number" id="pd-quantity-input" value="1" min="1">
+                                        <span class="qty-up">+</span>
+                                        <span class="qty-down">-</span>
+                                    </div>
+                                </div>
+                                <button class="add-to-cart-btn" id="btn-add-to-cart">
+                                    <i class="fa fa-shopping-cart"></i> add to cart
+                                </button>
+                            </div>
 
-						</div>
-					</div>
+                            <ul class="product-btns">
+                                <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
+                                <li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
+                            </ul>
+
+                            <ul class="product-links">
+                                <li>Share:</li>
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                <li><a href="#"><i class="fa fa-envelope"></i></a></li>
+                            </ul>
+
+                        </div>
+                    </div>
 					<!-- /Product details -->
 
 					<!-- Product tab -->
@@ -820,12 +782,215 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script src="js/slick.min.js"></script>
-		<script src="js/nouislider.min.js"></script>
-		<script src="js/jquery.zoom.min.js"></script>
-		<script src="js/main.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/slick.min.js"></script>
+        <script src="js/nouislider.min.js"></script>
+        <script src="js/jquery.zoom.min.js"></script>
+        <script src="js/main.js"></script>
 
-	</body>
+        <script>
+            const API_BASE = "http://localhost:8081";
+            let currentProduct = null; // Biến toàn cục lưu sản phẩm hiện tại
+
+            /* ================= AUTHENTICATION ================= */
+            document.addEventListener("DOMContentLoaded", function () {
+                const span = document.getElementById("welcomeUser");
+                const userJson = localStorage.getItem("currentUser");
+                const accountLink = document.querySelector(".header-links .fa-user-o")?.parentElement;
+
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    if(span) span.textContent = "Xin chào, " + user.fullName;
+
+                    // Đổi link Login thành Logout
+                    if (accountLink) {
+                        accountLink.innerHTML = `<i class="fa fa-user-o"></i> ${user.fullName} (Logout)`;
+                        accountLink.href = "#";
+                        accountLink.onclick = function (e) {
+                            e.preventDefault();
+                            localStorage.removeItem("currentUser");
+                            window.location.href = "Login.html";
+                        };
+                    }
+                } else {
+                    if(span) span.textContent = "";
+                }
+            });
+
+            /* ================= CART FUNCTIONS ================= */
+            function getCart() {
+                return JSON.parse(localStorage.getItem("cart") || "[]");
+            }
+
+            function saveCart(cart) {
+                localStorage.setItem("cart", JSON.stringify(cart));
+            }
+
+            function updateCartQty() {
+                const cart = getCart();
+                const totalQty = cart.reduce((s, i) => s + (i.quantity || 0), 0);
+
+                // Tìm badge số lượng trên header
+                const qtyEls = document.querySelectorAll(".dropdown .qty");
+                qtyEls.forEach(el => el.textContent = totalQty);
+
+                // Update Mini Cart Preview (nếu có)
+                const cartList = document.querySelector(".cart-list");
+                const cartSubtotal = document.querySelector(".cart-summary h5");
+                const cartCountSmall = document.querySelector(".cart-summary small");
+
+                if (cartList) {
+                    cartList.innerHTML = "";
+                    let subtotal = 0;
+                    cart.forEach(item => {
+                        subtotal += (item.price * item.quantity);
+                        const html = `
+                            <div class="product-widget">
+                                <div class="product-img">
+                                    <img src="${item.imageUrl}" alt="">
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-name"><a href="#">${item.name}</a></h3>
+                                    <h4 class="product-price"><span class="qty">${item.quantity}x</span>${formatPriceVND(item.price)}</h4>
+                                </div>
+                                <button class="delete"><i class="fa fa-close"></i></button>
+                            </div>`;
+                        cartList.innerHTML += html;
+                    });
+                    if(cartSubtotal) cartSubtotal.textContent = "SUBTOTAL: " + formatPriceVND(subtotal);
+                    if(cartCountSmall) cartCountSmall.textContent = totalQty + " Item(s) selected";
+                }
+            }
+
+            // Hàm thêm vào giỏ hàng (có hỗ trợ số lượng custom)
+            function addToCart(product, quantityToAdd = 1) {
+                let cart = getCart();
+
+                if (!Number.isInteger(product.productId) || product.productId <= 0) {
+                    alert("Lỗi sản phẩm (thiếu ID)!");
+                    return;
+                }
+
+                const idx = cart.findIndex(x => x.productId === product.productId);
+
+                if (idx >= 0) {
+                    cart[idx].quantity += quantityToAdd;
+                } else {
+                    cart.push({ ...product, quantity: quantityToAdd });
+                }
+
+                saveCart(cart);
+                updateCartQty();
+                alert(`Đã thêm ${quantityToAdd} sản phẩm vào giỏ hàng!`);
+            }
+
+            /* ================= PRODUCT DETAIL LOGIC ================= */
+            function getProductId() {
+                const url = new URL(window.location.href);
+                const id = url.searchParams.get("id");
+                return id ? Number(id) : null;
+            }
+
+            function formatPriceVND(value) {
+                if (value == null) return "0 VNĐ";
+                const n = Number(value);
+                if (!Number.isFinite(n)) return "0 VNĐ";
+                return new Intl.NumberFormat("vi-VN").format(n) + " VNĐ";
+            }
+
+            async function fetchJson(url) {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            }
+
+            function renderProduct(p) {
+                // Lưu vào biến toàn cục để dùng khi bấm nút Add to Cart
+                currentProduct = p;
+
+                // 1) Text
+                const nameEl = document.getElementById("pd-name");
+                const priceEl = document.getElementById("pd-price");
+                const descEl = document.getElementById("pd-desc");
+                const catEl = document.getElementById("pd-category");
+                const stockEl = document.getElementById("pd-stock");
+
+                if (nameEl) nameEl.textContent = p.name || "";
+                if (priceEl) priceEl.innerHTML = `${formatPriceVND(p.price)}`;
+                if (descEl) descEl.textContent = p.description || "";
+                if (catEl) catEl.textContent = p.categoryName || "Unknown";
+                if (stockEl) stockEl.textContent = (p.stock > 0 ? "In Stock" : "Out of Stock");
+
+                // 2) Ảnh (Main & Thumbnails)
+                const main = document.getElementById("product-main-img");
+                const thumbs = document.getElementById("product-imgs");
+                const img = (p.imageUrl && p.imageUrl.trim() !== "") ? p.imageUrl : "img/product01.png";
+
+                // Logic render ảnh đơn giản (nếu có list ảnh phụ thì duyệt mảng p.images)
+                if (main) {
+                    main.innerHTML = `<div class="product-preview"><img src="${img}" alt="${p.name}"></div>`;
+                }
+                if (thumbs) {
+                    thumbs.innerHTML = `<div class="product-preview"><img src="${img}" alt="${p.name}"></div>`;
+                }
+
+                // Re-init Slick Slider (nếu cần thiết, tuỳ thuộc main.js template)
+                // Thông thường main.js sẽ chạy onload, nên render động có thể cần init lại
+                // Ở đây ta render HTML tĩnh đơn giản trước.
+            }
+
+            async function loadProductDetail() {
+                const id = getProductId();
+                if (!id) {
+                    alert("Thiếu ID sản phẩm trên URL!");
+                    return;
+                }
+                const url = `${API_BASE}/api/products/${id}`;
+                try {
+                    const p = await fetchJson(url);
+                    renderProduct(p);
+                } catch (e) {
+                    console.error(e);
+                    alert("Không tải được chi tiết sản phẩm.");
+                }
+            }
+
+            /* ================= EVENT HANDLERS ================= */
+            document.addEventListener("DOMContentLoaded", async () => {
+                // 1. Load cart & user info
+                updateCartQty();
+
+                // 2. Load product info
+                await loadProductDetail();
+
+
+                // 3. Xử lý nút Add To Cart
+                const btnAdd = document.getElementById("btn-add-to-cart");
+                if(btnAdd) {
+                    btnAdd.addEventListener("click", () => {
+                        if(!currentProduct) return;
+
+                        const qtyVal = parseInt(document.getElementById("pd-quantity-input").value) || 1;
+
+                        // Chuẩn hoá object để lưu vào giỏ hàng
+                        const productToAdd = {
+                            productId: currentProduct.id,
+                            name: currentProduct.name,
+                            price: currentProduct.price,
+                            imageUrl: currentProduct.imageUrl || "img/product01.png"
+                        };
+
+                        addToCart(productToAdd, qtyVal);
+                    });
+                }
+            });
+        </script>
+
+
+
+
+    </body>
 </html>
+
+

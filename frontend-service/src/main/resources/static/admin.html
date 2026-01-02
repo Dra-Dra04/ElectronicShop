@@ -98,8 +98,9 @@
                 <li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
             </ul>
             <ul class="header-links pull-right">
-                <li><a href="#"><i class="fa fa-user-secret"></i> Admin Panel</a></li>
-                <li><a href="store.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+
+                <li><a href="store.html"><i class="fa fa-house"></i> Home</a></li>
+                <li><a href="Login.html"><i class="fa fa-sign-out"></i> Logout</a></li>
             </ul>
         </div>
     </div>
@@ -114,7 +115,7 @@
                 <!-- LOGO -->
                 <div class="col-md-3">
                     <div class="header-logo">
-                        <a href="#" class="logo">
+                        <a href="store.html" class="logo">
                             <h2 style="color: #FFF; margin-top: 10px;">ELECTRO<span style="color: #D10024;">.</span></h2>
                         </a>
                     </div>
@@ -275,22 +276,44 @@
                             <!-- ADDED: brand rows will be injected by JS (hiện tại có thể để trống hoặc fake) -->
                             </tbody>
                         </table>
+                        <h4>Existing Categories</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody id="category-table-body"></tbody>
+                        </table>
                     </div>
 
                     <!-- TAB: ORDERS -->
                     <div id="orders" class="tab-pane fade">
-                        <h3 class="section-title">Order Management</h3>
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-md-6">
+                                <h3 class="section-title" style="border:none;margin:0;">Order Management</h3>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button class="btn btn-default" id="btn-refresh-orders">
+                                    <i class="fa fa-refresh"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="orders-msg" class="text-muted" style="margin-bottom:10px;"></div>
 
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ORDER ID</th>
-                                    <th>ADDRESS</th>
-                                    <th>DATE</th>
-                                    <th>TOTAL</th>
-                                    <th>STATUS</th>
-                                    <th>ACTION</th>
+                                    <th style="width:90px;">Mã</th>
+                                    <th style="width:180px;">Ngày tạo</th>
+                                    <th style="width:160px;">Trạng thái</th>
+                                    <th style="width:160px;">Tổng tiền</th>
+                                    <th>Giao tới</th>
+                                    <th style="width:210px;">Thao tác</th>
                                 </tr>
                                 </thead>
                                 <tbody id="order-table-body">
@@ -300,10 +323,63 @@
                         </div>
                     </div>
 
+                    <!-- MODAL: VIEW ORDER -->
+                    <div id="viewOrderModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Chi tiết đơn hàng <span id="view-order-id"></span></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row" style="margin-bottom:12px;">
+                                        <div class="col-md-6">
+                                            <div><b>Khách hàng:</b> <span id="view-order-customer">-</span></div>
+                                            <div><b>SĐT:</b> <span id="view-order-phone">-</span></div>
+                                            <div><b>Email:</b> <span id="view-order-email">-</span></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div><b>Địa chỉ giao:</b> <span id="view-order-address">-</span></div>
+                                            <div><b>Ngày tạo:</b> <span id="view-order-createdAt">-</span></div>
+                                            <div><b>Trạng thái:</b> <span id="view-order-status">-</span></div>
+                                        </div>
+                                    </div>
+
+                                    <hr/>
+
+                                    <h4 style="margin-top:0;">Items</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th style="width:70px;">#</th>
+                                                <th>Sản phẩm</th>
+                                                <th style="width:120px;">Đơn giá</th>
+                                                <th style="width:100px;">SL</th>
+                                                <th style="width:140px;">Thành tiền</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="view-order-items"></tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <h4>Tổng: <span id="view-order-total">0 ₫</span></h4>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- TAB: USERS -->
                     <div id="users" class="tab-pane fade">
                         <h3 class="section-title">User Management</h3>
+                        <button class="btn-red" data-toggle="modal" data-target="#addUserModal">
+                            <i class="fa fa-plus"></i> Add User
+                        </button>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -313,8 +389,7 @@
                                     <th>Email</th>
                                     <th>Role</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
+                                    <th style="width: 180px;">Change Role</th> <th>Actions</th> </tr>
                                 </thead>
                                 <!-- ADDED: tbody với id để sau này load Users bằng API -->
                                 <tbody id="user-table-body">
@@ -492,6 +567,47 @@
         </div>
     </div>
 </div>
+
+=== MODAL ADD USER ===
+<div id="addUserModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add New User</h4>
+            </div>
+            <div class="modal-body">
+                <form id="add-user-form">
+                    <div class="admin-form-group">
+                        <label>Full Name</label>
+                        <input id="user-fullname" class="input" type="text" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Email</label>
+                        <input id="user-email" class="input" type="email" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Password</label>
+                        <input id="user-password" class="input" type="password" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Role</label>
+                        <select id="user-role" class="input">
+                            <option value="CUSTOMER">CUSTOMER</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="SALER">SALER</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">Close</button>
+                <button class="btn btn-red" id="btn-save-user">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- FOOTER -->
 <footer id="footer">
@@ -839,6 +955,10 @@
                 const $selectAdd = $('#product-category-select');
                 const $selectEdit = $('#edit-product-category-select');
 
+
+                const $catTbody = $('#category-table-body');
+                if ($catTbody.length) $catTbody.empty();
+
                 $selectAdd.find('option:not(:first)').remove();
                 $selectEdit.find('option:not(:first)').remove();
 
@@ -847,9 +967,21 @@
                 }
 
                 categories.forEach(function (c) {
+                    const label = (c.name || c.categoryName || '').trim();
+                    if (!label) return;
                     const option = `<option value="${c.id}">${c.name}</option>`;
                     $selectAdd.append(option);
                     $selectEdit.append(option);
+
+                if ($catTbody.length) {
+                    $catTbody.append(`
+                    <tr>
+                      <td>${c.id}</td>
+                      <td>${label}</td>
+                      <td>${c.description || ''}</td>
+                    </tr>
+                  `);
+                }
                 });
             })
             .fail(function () {
@@ -1010,187 +1142,327 @@
         });
     }
     // ========== USERS ==========
-    function loadUsers(role) {
-        let url = ADMIN_API_BASE + '/users';
-        if (role) {
-            url += '?role=' + role;
-        }
-
-        $.get(url)
-            .done(function (users) {
-                const $tbody = $('#user-table-body');
-                $tbody.empty();
-
-                if (!users || users.length === 0) {
-                    $tbody.append(
-                        '<tr><td colspan="6" class="text-center">No users found</td></tr>'
-                    );
-                    return;
-                }
-
-                users.forEach(function (u) {
-                    const statusLabel = u.active
-                        ? '<span class="label label-success">Active</span>'
-                        : '<span class="label label-default">Inactive</span>';
-
-                    const rowHtml = `
-                        <tr>
-                            <td>#${u.id}</td>
-                            <td>${u.fullName || ''}</td>
-                            <td>${u.email || ''}</td>
-                            <td>${u.role || ''}</td>
-                            <td>${statusLabel}</td>
-                            <td>
-                                <button class="btn btn-sm btn-default" onclick="viewUser(${u.id})">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $tbody.append(rowHtml);
-                });
-            })
-            .fail(function () {
-                console.error('Failed to load users');
-                alert('Không tải được danh sách user. Kiểm tra lại admin-service / customer-service.');
-            });
+    function loadUsers(roleFilter) {
+    let url = ADMIN_API_BASE + '/users';
+    if (roleFilter) {
+        url += '?role=' + roleFilter;
     }
 
-    function deleteUser(id) {
-        if (!confirm('Bạn có chắc muốn xoá user #' + id + ' ?')) {
+    $.get(url)
+        .done(function (users) {
+            const $tbody = $('#user-table-body');
+            $tbody.empty();
+
+            if (!users || users.length === 0) {
+                $tbody.append('<tr><td colspan="7" class="text-center">No users found</td></tr>');
+                return;
+            }
+
+            users.forEach(function (u) {
+                // Label trạng thái Active/Inactive
+                const statusLabel = u.active
+                    ? '<span class="label label-success">Active</span>'
+                    : '<span class="label label-default">Inactive</span>';
+
+                // --- PHẦN THAY ĐỔI: TẠO DROPDOWN CHỌN ROLE ---
+                // Kiểm tra role hiện tại để set thuộc tính "selected"
+                const isCustomer = u.role === 'CUSTOMER' ? 'selected' : '';
+                const isAdmin = u.role === 'ADMIN' ? 'selected' : '';
+                const isSaler = u.role === 'SALER' ? 'selected' : '';
+
+                // Tạo HTML cho Dropdown và nút Lưu
+                // ID của select sẽ là "role-select-{userId}" để tí nữa lấy giá trị
+                const roleSelector = `
+                    <div style="display:flex; align-items:center;">
+                        <select id="role-select-${u.id}" class="form-control input-sm" style="width:110px; margin-right:5px;">
+                            <option value="CUSTOMER" ${isCustomer}>CUSTOMER</option>
+                            <option value="SALER" ${isSaler}>SALER</option>
+                            <option value="ADMIN" ${isAdmin}>ADMIN</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" title="Lưu quyền mới" onclick="saveUserRole(${u.id})">
+                            <i class="fa fa-save"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Render hàng
+                const rowHtml = `
+                    <tr>
+                        <td>#${u.id}</td>
+                        <td>${u.fullName || ''}</td>
+                        <td>${u.email || ''}</td>
+                        <td><span class="label label-info">${u.role}</span></td>
+                        <td>${statusLabel}</td>
+                        <td>
+                            ${roleSelector}
+                        </td>
+                        <td>
+                             <button class="btn btn-sm btn-default" onclick="viewUser(${u.id})"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                $tbody.append(rowHtml);
+            });
+        })
+        .fail(function (xhr) {
+            console.error('Failed to load users', xhr);
+            alert('Lỗi tải danh sách user.');
+        });
+    }
+
+    function saveUserRole(id) {
+        // 1. Lấy giá trị từ dropdown tương ứng với ID user
+        const newRole = $('#role-select-' + id).val();
+
+        if (!confirm('Bạn có chắc muốn đổi quyền User #' + id + ' thành ' + newRole + '?')) {
             return;
         }
 
+        // 2. Gọi API cập nhật
+        // Lưu ý: Đảm bảo Backend UpdateUserRoleRequest nhận field tên là "role"
+        const requestBody = {
+            role: newRole
+        };
+
         $.ajax({
-            url: ADMIN_API_BASE + '/users/' + id,
-            method: 'DELETE',
+            url: ADMIN_API_BASE + '/users/' + id + '/role',
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(requestBody),
             success: function () {
-                loadUsers();
+                alert('Cập nhật quyền thành công!');
+                loadUsers(); // Load lại bảng để cập nhật giao diện
             },
-            error: function () {
-                alert('Xoá user thất bại. Kiểm tra lại backend.');
+            error: function (xhr) {
+                console.error(xhr);
+                alert('Cập nhật thất bại: ' + (xhr.responseText || 'Lỗi hệ thống'));
             }
         });
     }
 
-    function viewUser(id) {
-        $.get(ADMIN_API_BASE + '/users/' + id)
-            .done(function (u) {
-                alert(
-                    'User #' + u.id +
-                    '\nTên: ' + (u.fullName || '') +
-                    '\nEmail: ' + (u.email || '') +
-                    '\nPhone: ' + (u.phone || '') +
-                    '\nĐịa chỉ: ' + (u.address || '') +
-                    '\nRole: ' + (u.role || '') +
-                    '\nActive: ' + (u.active ? 'Yes' : 'No')
-                );
-            })
-            .fail(function () {
-                alert('Không load được chi tiết user');
-            });
+     /* ========== ORDERS ========== */
+    const ORDER_STATUSES = ["CREATED", "APPROVED", "SHIPPING", "DELIVERED", "CANCELLED"];
+
+    function fmtMoney(v) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(v || 0));
+    }
+    function fmtDate(d) {
+      if (!d) return '-';
+      return String(d).replace('T', ' ').substring(0, 19);
+    }
+    function badgeStatus(status) {
+      const s = String(status || "CREATED").toUpperCase();
+      let cls = "label label-default";
+      if (s === "CREATED") cls = "label label-warning";
+      if (s === "APPROVED") cls = "label label-info";
+      if (s === "SHIPPING") cls = "label label-primary";
+      if (s === "DELIVERED") cls = "label label-success";
+      if (s === "CANCELLED") cls = "label label-danger";
+      return `<span class="${cls}" style="padding:6px 10px; display:inline-block; border-radius:12px;">${s}</span>`;
     }
 
- /* ========== ORDERS ========== */
-const ORDER_STATUSES = ["CREATED", "APPROVED", "SHIPPING", "DELIVERED", "CANCELLED"];
+    // Load orders list
+    function loadOrders() {
+      const $msg = $('#orders-msg');
+      const $tbody = $('#order-table-body');
 
-function formatMoney(v) {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(v || 0));
-}
-function formatDate(d) {
-  if (!d) return '-';
-  return String(d).replace('T', ' ').substring(0, 19);
-}
+      $msg.text('Loading orders...');
+      $tbody.empty();
 
-// Load orders list
-function loadOrders() {
-  const $msg = $('#orders-msg');
-  const $tbody = $('#order-table-body');
+      $.get(ADMIN_API_BASE + '/orders')
+        .done(function (orders) {
+          if (!orders || orders.length === 0) {
+            $tbody.append('<tr><td colspan="6" class="text-center">Chưa có đơn hàng</td></tr>');
+            $msg.text('');
+            return;
+          }
 
-  $msg.text('Loading...');
-  $tbody.empty();
+          orders.forEach(function (o) {
+            const id = o.id;
+            const status = (o.status || 'CREATED').toUpperCase();
+            const totalAmount = o.totalAmount || 0;
+            const createdAt = o.createdAt;
+            const shippingAddress = (o.shippingAddress || o.address || '').trim(); // fallback
 
-  $.get(ADMIN_API_BASE + '/orders')
-    .done(function (orders) {
-      if (!orders || orders.length === 0) {
-        $tbody.append('<tr><td colspan="6" class="text-center">No orders found</td></tr>');
-        $msg.text('');
-        return;
-      }
+            const options = ORDER_STATUSES.map(st =>
+              `<option value="${st}" ${st === status ? 'selected' : ''}>${st}</option>`
+            ).join('');
 
-      orders.forEach(function (o) {
-        // DTO: OrderSummaryResponse
-        const id = o.id;
-        const status = (o.status || 'CREATED').toUpperCase();
-        const totalAmount = o.totalAmount || 0;
-        const createdAt = o.createdAt;
-        const shippingAddress = (o.shippingAddress || '').trim();
+            const row = `
+              <tr data-order-id="${id}">
+                <td><b>#${id}</b></td>
+                <td>${fmtDate(createdAt)}</td>
+                <td>
+                  ${badgeStatus(status)}
+                  <div style="margin-top:8px;">
+                    <select class="input order-status-select" style="height:34px; padding:0 10px;">
+                      ${options}
+                    </select>
+                  </div>
+                </td>
+                <td><b>${fmtMoney(totalAmount)}</b></td>
+                <td>${shippingAddress || '-'}</td>
+                <td>
+                  <button class="btn btn-xs btn-default btn-order-view">
+                    <i class="fa fa-eye"></i> Xem
+                  </button>
+                  <button class="btn btn-xs btn-red btn-order-save" style="margin-left:6px;">
+                    <i class="fa fa-save"></i> Lưu
+                  </button>
+                  <button class="btn btn-xs btn-danger btn-order-cancel" style="margin-left:6px;" ${status === "CANCELLED" ? "disabled" : ""}>
+                    <i class="fa fa-times"></i> Hủy
+                  </button>
+                </td>
+              </tr>
+            `;
+            $tbody.append(row);
+          });
 
-        const options = ORDER_STATUSES.map(st =>
-          `<option value="${st}" ${st === status ? 'selected' : ''}>${st}</option>`
-        ).join('');
+          $msg.text(`Loaded ${orders.length} orders`);
+        })
+        .fail(function (xhr) {
+          console.error("GET /orders failed:", xhr.status, xhr.responseText);
+          $msg.text('');
+          alert('Không tải được danh sách đơn hàng (GET /api/admin/orders)\n'
+            + 'Status: ' + xhr.status + '\n'
+            + (xhr.responseText || ''));
+        });
+    }
 
-        const row = `
-          <tr data-order-id="${id}">
-            <td><b>#${id}</b></td>
-            <td>${shippingAddress || '-'}</td>
-            <td>${formatDate(createdAt)}</td>
-            <td><b>${formatMoney(totalAmount)}</b></td>
-            <td>
-              <select class="input order-status-select" style="height:34px; padding:0 10px;">
-                ${options}
-              </select>
-              <div class="text-muted" style="font-size:12px; margin-top:6px;">
-                ${shippingAddress ? ('Ship: ' + shippingAddress) : 'Ship: -'}
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-xs btn-red btn-order-save">
-                <i class="fa fa-save"></i> Save
-              </button>
-            </td>
-          </tr>
-        `;
-        $tbody.append(row);
+    // Save status (PATCH)
+    $(document).on('click', '.btn-order-save', function () {
+      const $tr = $(this).closest('tr');
+      const orderId = $tr.data('order-id');
+      const newStatus = $tr.find('.order-status-select').val();
+
+      $.ajax({
+        url: ADMIN_API_BASE + '/orders/' + orderId + '/status',
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: newStatus }),
+        success: function () {
+          loadOrders();
+        },
+        error: function (xhr) {
+          console.error("PATCH status failed:", xhr.status, xhr.responseText);
+          alert('Đổi trạng thái thất bại.\n'
+            + 'Status: ' + xhr.status + '\n'
+            + (xhr.responseText || ''));
+        }
       });
-
-      $msg.text(`Loaded ${orders.length} orders`);
-    })
-    .fail(function (xhr) {
-      console.error("GET /orders failed:", xhr.status, xhr.responseText);
-      $msg.text('');
-      alert('Không tải được danh sách đơn hàng (GET /api/admin/orders)\n'
-        + 'Status: ' + xhr.status + '\n'
-        + (xhr.responseText || ''));
     });
-}
 
-// Save status (PATCH)
-$(document).on('click', '.btn-order-save', function () {
-  const $tr = $(this).closest('tr');
-  const orderId = $tr.data('order-id');
-  const newStatus = $tr.find('.order-status-select').val();
+    // Cancel order (PATCH -> CANCELLED)
+    $(document).on('click', '.btn-order-cancel', function () {
+      const $tr = $(this).closest('tr');
+      const orderId = $tr.data('order-id');
+
+      if (!confirm('Bạn chắc chắn muốn HỦY đơn #' + orderId + ' ?')) return;
+
+      $.ajax({
+        url: ADMIN_API_BASE + '/orders/' + orderId + '/status',
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: "CANCELLED" }),
+        success: function () {
+          loadOrders();
+        },
+        error: function (xhr) {
+          console.error("PATCH cancel failed:", xhr.status, xhr.responseText);
+          alert('Hủy đơn thất bại.\n'
+            + 'Status: ' + xhr.status + '\n'
+            + (xhr.responseText || ''));
+        }
+      });
+    });
+
+    // View order detail (Modal)
+    // ✅ cần endpoint: GET /api/admin/orders/{id}
+    $(document).on('click', '.btn-order-view', function () {
+      const orderId = $(this).closest('tr').data('order-id');
+
+      $('#view-order-id').text('#' + orderId);
+      $('#view-order-items').html('<tr><td colspan="5" class="text-center">Loading...</td></tr>');
+      $('#viewOrderModal').modal('show');
+
+      $.get(ADMIN_API_BASE + '/orders/' + orderId)
+        .done(function (o) {
+          // Tùy DTO của bạn: mình đặt fallback nhiều field
+          $('#view-order-customer').text(o.customerName || o.fullName || '-');
+          $('#view-order-phone').text(o.phone || '-');
+          $('#view-order-email').text(o.email || '-');
+          $('#view-order-address').text(o.shippingAddress || o.address || '-');
+          $('#view-order-createdAt').text(fmtDate(o.createdAt));
+          $('#view-order-status').html(badgeStatus(o.status));
+          $('#view-order-total').text(fmtMoney(o.totalAmount || o.total || 0));
+
+          const items = o.items || o.orderItems || [];
+          if (!items || items.length === 0) {
+            $('#view-order-items').html('<tr><td colspan="5" class="text-center">Không có item</td></tr>');
+            return;
+          }
+
+          let html = '';
+          items.forEach((it, idx) => {
+            const name = it.productName || it.name || ('Product #' + (it.productId || ''));
+            const unit = it.unitPrice ?? it.price ?? 0;
+            const qty = it.quantity ?? 0;
+            const line = (unit * qty);
+
+            html += `
+              <tr>
+                <td>${idx + 1}</td>
+                <td>${name}</td>
+                <td>${fmtMoney(unit)}</td>
+                <td>${qty}</td>
+                <td><b>${fmtMoney(line)}</b></td>
+              </tr>
+            `;
+          });
+
+          $('#view-order-items').html(html);
+        })
+        .fail(function (xhr) {
+          console.error("GET /orders/{id} failed:", xhr.status, xhr.responseText);
+          $('#view-order-items').html('<tr><td colspan="5" class="text-center">Không load được chi tiết</td></tr>');
+        });
+    });
+
+    $('#btn-refresh-orders').on('click', loadOrders);
+
+    // === ADD USER ===
+    $('#btn-save-user').on('click', function () {
+  const payload = {
+    fullName: $('#user-fullname').val().trim(),
+    email: $('#user-email').val().trim(),
+    password: $('#user-password').val(),
+    role: $('#user-role').val()
+  };
+
+  if (!payload.fullName || !payload.email || !payload.password) {
+    alert('Nhập đủ FullName, Email, Password');
+    return;
+  }
 
   $.ajax({
-    url: ADMIN_API_BASE + '/orders/' + orderId + '/status',
-    method: 'PATCH',
+    url: ADMIN_API_BASE + '/users',
+    method: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify({ status: newStatus }), // UpdateOrderStatusRequest
+    data: JSON.stringify(payload),
     success: function () {
-      alert('Đổi trạng thái thành công: ' + newStatus);
-      loadOrders();
+      $('#addUserModal').modal('hide');
+      $('#add-user-form')[0].reset();
+      loadUsers();
     },
     error: function (xhr) {
-      console.error("PATCH status failed:", xhr.status, xhr.responseText);
-      alert('Đổi trạng thái thất bại.\n'
-        + 'Status: ' + xhr.status + '\n'
-        + (xhr.responseText || ''));
+      console.error(xhr);
+      alert('Tạo user thất bại (trùng email? customer-service security?)');
     }
   });
 });
+
+
 
 
 </script>

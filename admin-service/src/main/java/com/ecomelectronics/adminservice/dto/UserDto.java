@@ -8,7 +8,7 @@ public class UserDto {
     private String email;
     private String phone;
     private String address;
-    private String role;      // ADMIN / CUSTOMER / SALER (string cho đơn giản)
+    private String role;      // ADMIN / CUSTOMER / SALER
     private Boolean active;
     private LocalDateTime createdAt;
 

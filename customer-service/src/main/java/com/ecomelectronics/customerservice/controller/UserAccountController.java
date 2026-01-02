@@ -2,6 +2,8 @@ package com.ecomelectronics.customerservice.controller;
 
 import com.ecomelectronics.customerservice.dto.CreateUserRequest;
 import com.ecomelectronics.customerservice.dto.UpdateUserRequest;
+import com.ecomelectronics.customerservice.dto.UpdateUserRoleRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ecomelectronics.customerservice.dto.UserDto;
 import com.ecomelectronics.customerservice.model.UserAccount;
 import com.ecomelectronics.customerservice.model.UserRole;
@@ -60,9 +62,13 @@ public class UserAccountController {
         return toDto(user);
     }
 
-    // POST /api/users  (role có thể gửi từ client)
+    // POST /api/users
     @PostMapping
     public UserDto create(@RequestBody CreateUserRequest req) {
+        if (userRepo.existsByEmail(req.getEmail())) {
+            throw new RuntimeException("Email '" + req.getEmail() + "' đã tồn tại!");
+        }
+
         UserRole role = (req.getRole() != null) ? req.getRole() : UserRole.CUSTOMER;
 
         String encodedPassword = passwordEncoder.encode(req.getPassword());
@@ -144,6 +150,20 @@ public class UserAccountController {
         UserAccount user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return toDto(user);
+    }
+    @PutMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDto updateRole(@PathVariable Long id, @RequestBody UpdateUserRoleRequest req) {
+        UserAccount user = userRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (req.getRole() == null) {
+            throw new RuntimeException("Role is required");
+        }
+
+        user.setRole(req.getRole());
+        user = userRepo.save(user);
         return toDto(user);
     }
 }
