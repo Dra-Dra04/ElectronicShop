@@ -47,7 +47,7 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-                        <li><a href="admin.html"><i></i> Admin</a></li>
+                        <li id="adminLink" style="display: none;"><a href="admin.html"><i></i> Admin</a></li>
                         <li><a href="Login.html"><i class="fa fa-user-o"></i> My Account</a></li>
                         <span id="welcomeUser"></span>
 					</ul>
@@ -90,15 +90,6 @@
 						<!-- ACCOUNT -->
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
-								<!-- Wishlist -->
-								<div>
-									<a href="#">
-										<i class="fa fa-heart-o"></i>
-										<span>Your Wishlist</span>
-										<div class="qty">2</div>
-									</a>
-								</div>
-								<!-- /Wishlist -->
 
 								<!-- Cart -->
 								<div class="dropdown">
@@ -136,8 +127,8 @@
 											<h5>SUBTOTAL: $2940.00</h5>
 										</div>
 										<div class="cart-btns">
-											<a href="#">View Cart</a>
-											<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+											<a href="cart.html">View Cart</a>
+											<a href="checkout.html">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
 										</div>
 									</div>
 								</div>
@@ -168,19 +159,6 @@
 			<!-- container -->
 			<div class="container">
 				<!-- responsive-nav -->
-				<div id="responsive-nav">
-					<!-- NAV -->
-					<ul class="main-nav nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#">Hot Deals</a></li>
-						<li><a href="#">Categories</a></li>
-						<li><a href="#">Laptops</a></li>
-						<li><a href="#">Smartphones</a></li>
-						<li><a href="#">Cameras</a></li>
-						<li><a href="#">Accessories</a></li>
-					</ul>
-					<!-- /NAV -->
-				</div>
 				<!-- /responsive-nav -->
 			</div>
 			<!-- /container -->
@@ -191,19 +169,6 @@
 		<div id="breadcrumb" class="section">
 			<!-- container -->
 			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li><a href="#">All Categories</a></li>
-							<li><a href="#">Accessories</a></li>
-							<li><a href="#">Headphones</a></li>
-							<li class="active">Product name goes here</li>
-						</ul>
-					</div>
-				</div>
-				<!-- /row -->
 			</div>
 			<!-- /container -->
 		</div>
@@ -244,20 +209,6 @@
                                 <li><a href="#" id="pd-category"></a></li>
                             </ul>
 
-                            <div class="product-options">
-                                <label>
-                                    Size
-                                    <select class="input-select">
-                                        <option value="0">X</option>
-                                    </select>
-                                </label>
-                                <label>
-                                    Color
-                                    <select class="input-select">
-                                        <option value="0">Red</option>
-                                    </select>
-                                </label>
-                            </div>
 
                             <div class="add-to-cart">
                                 <div class="qty-label">
@@ -273,10 +224,6 @@
                                 </button>
                             </div>
 
-                            <ul class="product-btns">
-                                <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-                                <li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-                            </ul>
 
                             <ul class="product-links">
                                 <li>Share:</li>
@@ -818,6 +765,7 @@
                 }
             });
 
+
             /* ================= CART FUNCTIONS ================= */
             function getCart() {
                 return JSON.parse(localStorage.getItem("cart") || "[]");
@@ -905,11 +853,60 @@
                 return res.json();
             }
 
+           /* ================= UPDATED RENDER PRODUCT & SLIDER ================= */
+
+            // Hàm khởi tạo lại Slick Slider (Quan trọng)
+            // Vì HTML được sinh ra sau khi trang load, ta phải chạy lại lệnh này
+            function initSlickSlider() {
+                // 1. Hủy slider cũ nếu tồn tại để tránh lỗi
+                if ($('#product-main-img').hasClass('slick-initialized')) {
+                    $('#product-main-img').slick('unslick');
+                }
+                if ($('#product-imgs').hasClass('slick-initialized')) {
+                    $('#product-imgs').slick('unslick');
+                }
+
+                // 2. Khởi tạo Main Slider
+                $('#product-main-img').slick({
+                    infinite: true,
+                    speed: 300,
+                    dots: false,
+                    arrows: true,
+                    fade: true,
+                    asNavFor: '#product-imgs',
+                });
+
+                // 3. Khởi tạo Thumbnail Slider
+                $('#product-imgs').slick({
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    arrows: true,
+                    centerMode: true,
+                    focusOnSelect: true,
+                    centerPadding: 0,
+                    vertical: true,
+                    asNavFor: '#product-main-img',
+                    responsive: [{
+                        breakpoint: 991,
+                        settings: {
+                            vertical: false,
+                            arrows: false,
+                            dots: true,
+                        }
+                    }]
+                });
+
+                // Fix lỗi zoom plugin xung đột với slick (nếu có)
+                var zoomMainProduct = document.getElementById('product-main-img');
+                if (zoomMainProduct) {
+                    $('#product-main-img .product-preview').zoom();
+                }
+            }
+
             function renderProduct(p) {
-                // Lưu vào biến toàn cục để dùng khi bấm nút Add to Cart
                 currentProduct = p;
 
-                // 1) Text
+                // 1) Render Text Info
                 const nameEl = document.getElementById("pd-name");
                 const priceEl = document.getElementById("pd-price");
                 const descEl = document.getElementById("pd-desc");
@@ -920,24 +917,73 @@
                 if (priceEl) priceEl.innerHTML = `${formatPriceVND(p.price)}`;
                 if (descEl) descEl.textContent = p.description || "";
                 if (catEl) catEl.textContent = p.categoryName || "Unknown";
-                if (stockEl) stockEl.textContent = (p.stock > 0 ? "In Stock" : "Out of Stock");
 
-                // 2) Ảnh (Main & Thumbnails)
-                const main = document.getElementById("product-main-img");
-                const thumbs = document.getElementById("product-imgs");
-                const img = (p.imageUrl && p.imageUrl.trim() !== "") ? p.imageUrl : "img/product01.png";
-
-                // Logic render ảnh đơn giản (nếu có list ảnh phụ thì duyệt mảng p.images)
-                if (main) {
-                    main.innerHTML = `<div class="product-preview"><img src="${img}" alt="${p.name}"></div>`;
+                // Xử lý hiển thị Stock
+                if (stockEl) {
+                    if (p.stock > 0) {
+                        stockEl.textContent = "In Stock (" + p.stock + ")";
+                        stockEl.style.color = "green";
+                    } else {
+                        stockEl.textContent = "Out of Stock";
+                        stockEl.style.color = "red";
+                        // Disable nút mua nếu hết hàng
+                        const btn = document.getElementById("btn-add-to-cart");
+                        if(btn) { btn.disabled = true; btn.style.opacity = 0.5; }
+                    }
                 }
-                if (thumbs) {
-                    thumbs.innerHTML = `<div class="product-preview"><img src="${img}" alt="${p.name}"></div>`;
+
+                // 2) Render Images (Xử lý nhiều ảnh)
+                const mainContainer = $('#product-main-img');
+                const thumbsContainer = $('#product-imgs');
+
+                // Làm sạch container cũ
+                mainContainer.empty();
+                thumbsContainer.empty();
+
+                // Kiểm tra xem backend có trả về mảng images không
+                // Nếu p.images có dữ liệu thì dùng, nếu không thì dùng p.imageUrl làm ảnh duy nhất
+                let imageList = [];
+
+                if (p.images && p.images.length > 0) {
+                    // Sắp xếp theo sortOrder (nếu backend chưa sort)
+                    imageList = p.images.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                } else if (p.imageUrl) {
+                    // Fallback nếu chỉ có 1 link ảnh
+                    imageList.push({ imageUrl: p.imageUrl });
+                } else {
+                    // Fallback nếu không có ảnh nào
+                    imageList.push({ imageUrl: "img/product01.png" });
                 }
 
-                // Re-init Slick Slider (nếu cần thiết, tuỳ thuộc main.js template)
-                // Thông thường main.js sẽ chạy onload, nên render động có thể cần init lại
-                // Ở đây ta render HTML tĩnh đơn giản trước.
+                // Tạo HTML cho slider
+                let htmlMain = '';
+                let htmlThumb = '';
+
+                imageList.forEach(img => {
+                    const url = img.imageUrl || "img/product01.png";
+
+                    // HTML cho ảnh lớn
+                    htmlMain += `
+                        <div class="product-preview">
+                            <img src="${url}" alt="">
+                        </div>
+                    `;
+
+                    // HTML cho ảnh nhỏ (thumb)
+                    htmlThumb += `
+                        <div class="product-preview">
+                            <img src="${url}" alt="">
+                        </div>
+                    `;
+                });
+
+                // Inject HTML vào DOM
+                mainContainer.html(htmlMain);
+                thumbsContainer.html(htmlThumb);
+
+                // 3) Kích hoạt Slider
+                // Phải gọi sau khi HTML đã được chèn vào
+                initSlickSlider();
             }
 
             async function loadProductDetail() {

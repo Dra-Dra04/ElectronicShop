@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/products")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class AdminProductController {
 
     private final AdminProductService adminProductService;

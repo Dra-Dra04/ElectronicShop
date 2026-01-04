@@ -17,6 +17,7 @@
 
     <!-- Custom Styles -->
     <style>
+        <style>
         body { font-family: 'Montserrat', sans-serif; color: #333; background-color: #FBFBFC; }
         h1, h2, h3, h4, h5, h6 { color: #2B2D42; font-weight: 700; margin: 0 0 10px; }
         a { color: #2B2D42; transition: 0.2s color; }
@@ -50,11 +51,51 @@
         }
         .admin-sidebar .nav-pills > li > a:hover { background-color: #eee; }
 
-        /* Stat Cards */
-        .stat-card { background: #fff; padding: 20px; border: 1px solid #E4E7ED; margin-bottom: 20px; position: relative; overflow: hidden; }
-        .stat-card .stat-icon { position: absolute; right: 10px; top: 10px; font-size: 40px; color: #e4e7ed; z-index: 1; }
-        .stat-card .stat-number { font-size: 24px; font-weight: 700; color: #D10024; position: relative; z-index: 2; margin-bottom: 5px; }
-        .stat-card .stat-label { font-size: 14px; text-transform: uppercase; font-weight: 500; position: relative; z-index: 2; }
+        /* --- FIXED: STAT CARDS (SỬA LẠI PHẦN NÀY) --- */
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #E4E7ED;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px; /* Bo góc nhẹ cho đẹp */
+        }
+
+        .stat-card .stat-icon {
+            position: absolute;
+            right: 10px;
+            top: 15px;
+            font-size: 45px;
+            color: #D10024; /* Đổi màu icon cho hợp theme */
+            z-index: 1;
+            opacity: 0.15; /* FIXED: Làm mờ icon để chữ đè lên không bị rối */
+            transform: rotate(-15deg); /* Xoay nhẹ tạo kiểu */
+        }
+
+        .stat-card .stat-number {
+            font-size: 20px; /* FIXED: Giảm font size từ 24px xuống 20px */
+            font-weight: 700;
+            color: #D10024;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 5px;
+
+            /* FIXED: Xử lý khi text quá dài */
+            white-space: nowrap;       /* Không cho xuống dòng */
+            overflow: hidden;          /* Ẩn phần thừa */
+            text-overflow: ellipsis;   /* Thêm dấu ... nếu quá dài */
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #8D99AE; /* Màu chữ nhạt hơn một chút cho label */
+            position: relative;
+            z-index: 2;
+        }
+        /* ------------------------------------------- */
 
         /* Buttons & Tables */
         .btn-red { background-color: #D10024; color: #fff; border: none; border-radius: 40px; padding: 10px 20px; font-weight: 700; text-transform: uppercase; font-size: 13px; transition: 0.2s all; cursor: pointer; }
@@ -85,6 +126,8 @@
         .modal-header { border-bottom: 1px solid #E4E7ED; }
         .modal-footer { border-top: 1px solid #E4E7ED; }
     </style>
+    </style>
+
 </head>
 <body>
 <!-- HEADER -->
@@ -151,7 +194,7 @@
                         <li><a data-toggle="pill" href="#products"><i class="fa fa-cube"></i> Products</a></li>
                         <li><a data-toggle="pill" href="#categories"><i class="fa fa-tags"></i> Categories & Brands</a></li>
                         <li><a data-toggle="pill" href="#orders"><i class="fa fa-shopping-cart"></i> Orders</a></li>
-                        <li><a data-toggle="pill" href="#users"><i class="fa fa-users"></i> Users</a></li>
+                        <li id="sidebar-users"><a data-toggle="pill" href="#users"><i class="fa fa-users"></i> Users</a></li>
                     </ul>
                 </div>
             </div>
@@ -694,15 +737,38 @@
 
 <!-- ADDED: JavaScript gọi API admin-service -->
 <script>
-    const ADMIN_API_BASE = 'http://localhost:8085/api/admin';
+<!--    const ADMIN_API_BASE = 'http://localhost:8085/api/admin';-->
+    const ADMIN_API_BASE = 'http://localhost:9090/api/admin';
 
     // Khi trang load xong
     $(document).ready(function () {
+    const currentUserRole = localStorage.getItem('userRole');
+    console.log("=== CHECK ROLE ===");
+    console.log("Gía trị role lấy được là:", currentUserRole);
+    console.log("Kiểu dữ liệu:", typeof currentUserRole);
+    console.log("====================");
+
+        // 2. Kiểm tra: Nếu KHÁC 'ADMIN' thì ẩn
+        if (currentUserRole !== 'ADMIN') {
+            console.log("User hiện tại là: " + currentUserRole + " -> Ẩn menu Users.");
+
+            // Xoá menu bên trái
+            $('#sidebar-users').remove();
+
+            // Xoá luôn nội dung tab bên phải (để chắc ăn)
+            $('#users').remove();
+
+            // Mẹo: Nếu bạn muốn ẩn thêm nút "Add Product" với nhân viên SALE
+            // $('#addProductModal').remove(); // Xoá modal
+            // $('.btn-red[data-target="#addProductModal"]').hide(); // Ẩn nút thêm
+        }
     loadDashboardStats();
     loadProducts();
     loadBrands();
     loadCategories();
-    loadUsers();
+    if (currentUserRole === 'ADMIN') {
+                loadUsers();
+            }
     loadOrders();
 
     // Save new product
@@ -725,6 +791,7 @@
         updateProduct();
     });
     });
+
 
     // -------- DASHBOARD --------
     function loadDashboardStats() {

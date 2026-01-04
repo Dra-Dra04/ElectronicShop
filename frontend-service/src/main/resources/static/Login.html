@@ -31,7 +31,7 @@
     </div>
 </div>
 
-<script>
+<<script>
     const CUSTOMER_API = "http://localhost:8082";
 
     document.getElementById("loginForm").addEventListener("submit", async function (e) {
@@ -40,6 +40,7 @@
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
+        // Tạo Basic Auth Token
         const basicToken = btoa(email + ":" + password);
 
         try {
@@ -52,12 +53,30 @@
 
             if (res.ok) {
                 const user = await res.json();
-                // Lưu thông tin user & token vào localStorage
+
+                // --- ĐÂY LÀ PHẦN QUAN TRỌNG CẦN SỬA ---
+
+                // 1. Lưu token
                 localStorage.setItem("authToken", basicToken);
+
+                // 2. Lưu toàn bộ object user (để dùng cho việc khác)
                 localStorage.setItem("currentUser", JSON.stringify(user));
 
-                // Chuyển về home hoặc store
-                window.location.href = "store.html";
+                // 3. QUAN TRỌNG NHẤT: Lưu riêng cái ROLE ra để admin.html đọc được
+                // Giả sử API trả về user.role là "ADMIN" hoặc "CUSTOMER"
+                localStorage.setItem("userRole", user.role);
+
+                console.log("Login thành công. Role:", user.role);
+
+                // 4. Kiểm tra quyền để chuyển hướng đúng trang
+                // Nếu là ADMIN -> Vào Admin Dashboard
+                // Nếu là CUSTOMER -> Vào trang mua hàng (Store)
+                if (user.role === 'ADMIN' || user.role === 'ROLE_ADMIN') {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "store.html";
+                }
+
             } else if (res.status === 401) {
                 document.getElementById("msg").innerText = "Sai email hoặc mật khẩu";
             } else {

@@ -1,6 +1,7 @@
 package com.ecomelectronics.product_service.dto;
 
 import java.math.BigDecimal;
+import java.util.List; // Nhớ import List
 
 public class ProductDto {
 
@@ -10,9 +11,14 @@ public class ProductDto {
     private BigDecimal price;
     private String brand;
     private Integer stock;
-    private String imageUrl;
+    private String imageUrl; // Ảnh đại diện chính
     private Long categoryId;
     private String categoryName;
+
+    // --- HỨNG LIST ẢNH TỪ FRONTEND ---
+    private List<ProductImageDto> images;
+
+    // --- GETTERS & SETTERS ---
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -40,4 +46,7 @@ public class ProductDto {
 
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+
+    public List<ProductImageDto> getImages() { return images; }
+    public void setImages(List<ProductImageDto> images) { this.images = images; }
 }

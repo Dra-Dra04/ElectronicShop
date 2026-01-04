@@ -1,44 +1,55 @@
 package com.ecomelectronics.adminservice.service;
 
-import com.ecomelectronics.adminservice.dto.DashboardStatsDto;
+import com.ecomelectronics.adminservice.Client.OrderClient;
+import com.ecomelectronics.adminservice.Client.ProductClient;
+import com.ecomelectronics.adminservice.Client.UserClient;
+import com.ecomelectronics.adminservice.dto.DashboardOverviewDto;
+import com.ecomelectronics.adminservice.dto.OrderStatsDto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
 
 @Service
 public class AdminDashboardService {
-    private final RestTemplate restTemplate;
-    public AdminDashboardService(RestTemplate restTemplate){
-        this.restTemplate = restTemplate;
+
+    private final ProductClient productClient;
+    private final UserClient userClient;
+    private final OrderClient orderClient;
+
+    public AdminDashboardService(ProductClient productClient, UserClient userClient, OrderClient orderClient) {
+        this.productClient = productClient;
+        this.userClient = userClient;
+        this.orderClient = orderClient;
     }
-    public DashboardStatsDto getOverview(){
-        DashboardStatsDto stats = new DashboardStatsDto();
 
-        // Gọi sang Order-Service
-        Long totalOrders = restTemplate.getForObject(
-                "http://localhost:8083/api/orders/admin/count",
-                Long.class
-        );
-        Double totalRevenue = restTemplate.getForObject(
-                "http://localhost:8083/api/orders/admin/totalRevenue",
-                Double.class
-        );
-        // Gọi sang Customer-Service
-        Long totalUsers = restTemplate.getForObject(
-                "http://localhost:8081/api/customers/admin/count",
-                Long.class
-        );
+    public DashboardOverviewDto getOverview() {
+        Long totalProducts = 0L;
+        Long totalUsers = 0L;
+        Long totalOrders = 0L;
+        BigDecimal totalRevenue = BigDecimal.ZERO;
 
-        // Gọi sang Product-Service
-        Long totalProducts = restTemplate.getForObject(
-                "http://localhost:8082/api/products/admin/count",
-                Long.class
-        );
-        stats.setTotalOrders(totalOrders != null ? totalOrders : 0);
-        stats.setTotalUsers(totalUsers != null ? totalUsers : 0);
-        stats.setTotalProducts(totalProducts != null ? totalProducts : 0);
-        stats.setTotalRevenue(totalRevenue != null ? totalRevenue : 0.0);
+        try {
+            totalProducts = productClient.countProducts();
+        } catch (Exception e) {
+            System.err.println("Lỗi Product Service: " + e.getMessage());
+        }
 
-        return stats;
+        try {
+            totalUsers = userClient.countUsers();
+        } catch (Exception e) {
+            System.err.println("Lỗi User Service: " + e.getMessage());
+        }
 
+        try {
+            OrderStatsDto orderStats = orderClient.getOrderStats();
+            if (orderStats != null) {
+                totalOrders = orderStats.getCount();
+                totalRevenue = orderStats.getRevenue();
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi Order Service: " + e.getMessage());
+        }
+
+        return new DashboardOverviewDto(totalOrders, totalUsers, totalProducts, totalRevenue);
     }
 }

@@ -7,19 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="payment-service" />
+        <module name="customer-service" />
+        <module name="api-gateway" />
         <module name="product-service" />
         <module name="order-service" />
-        <module name="payment-service" />
         <module name="frontend-service" />
-        <module name="customer-service" />
-      </profile>
-      <profile name="Annotation profile for ElectronicShop" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
         <module name="admin-service" />
       </profile>
     </annotationProcessing>
@@ -32,6 +25,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Product-service" options="-parameters" />
       <module name="admin-service" options="-parameters" />
+      <module name="api-gateway" options="-parameters" />
       <module name="cart-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="frontend-service" options="-parameters" />

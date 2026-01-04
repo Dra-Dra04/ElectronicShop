@@ -166,4 +166,8 @@ public class UserAccountController {
         user = userRepo.save(user);
         return toDto(user);
     }
+    @GetMapping("/count")
+    public long countUsers() {
+        return userRepo.count();
+    }
 }
