@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Electro</title>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h2>Đăng nhập</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input id="email" type="email" class="input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu</label>
+                        <input id="password" type="password" class="input" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Đăng nhập</button>
+                    <p id="msg" class="text-danger"></p>
+                </form>
+                <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<<script>
+<!--    const CUSTOMER_API = "http://localhost:8082";-->
+    const CUSTOMER_API = "";
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // Tạo Basic Auth Token
+        const basicToken = btoa(email + ":" + password);
+
+        try {
+            const res = await fetch(CUSTOMER_API + "/api/users/me", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Basic " + basicToken
+                }
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+
+                // --- ĐÂY LÀ PHẦN QUAN TRỌNG CẦN SỬA ---
+
+                // 1. Lưu token
+                localStorage.setItem("authToken", basicToken);
+
+                // 2. Lưu toàn bộ object user (để dùng cho việc khác)
+                localStorage.setItem("currentUser", JSON.stringify(user));
+
+                // 3. QUAN TRỌNG NHẤT: Lưu riêng cái ROLE ra để admin.html đọc được
+                // Giả sử API trả về user.role là "ADMIN" hoặc "CUSTOMER"
+                localStorage.setItem("userRole", user.role);
+
+                console.log("Login thành công. Role:", user.role);
+
+                // 4. Kiểm tra quyền để chuyển hướng đúng trang
+                // Nếu là ADMIN -> Vào Admin Dashboard
+                // Nếu là CUSTOMER -> Vào trang mua hàng (Store)
+                if (user.role === 'ADMIN' || user.role === 'ROLE_ADMIN') {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "store.html";
+                }
+
+            } else if (res.status === 401) {
+                document.getElementById("msg").innerText = "Sai email hoặc mật khẩu";
+            } else {
+                document.getElementById("msg").innerText = "Lỗi đăng nhập: " + res.status;
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById("msg").innerText = "Lỗi kết nối server";
+        }
+    });
+</script>
+
+</body>
+</html>
